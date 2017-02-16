@@ -47,6 +47,18 @@ namespace crs{
 
 	}STATUS;
 
+	typedef enum crs_Bxdf_Types {
+		// CRAYON BXDF types
+		NOHIT = 0x00,				// default bxdf, returns a constant color when no hit has been recorded
+		NORMAL,						// returns a color based on the normal at the intersection
+		BSDF,						// bidirectional scattering distribution function
+		BRDF,						// bidirectional reflectance distribution function
+		BTDF,						// bidirectional transmittance distribution function
+		BSSDF,						// bidirectional scattering surface (subsurface) distribution function
+		CONSTANT,					// returns a constant color
+
+	}BXDFTYPE;
+
 }
 
 #endif /* CRS_H_ */

@@ -150,6 +150,7 @@ int main(int argc, const char * argv[]){
 			const Value& type = (*itr)["type"];
 			const char *temp = type.GetString();
 
+			if (strcmp(temp, "NOHIT") == 0) b.type = crs::NOHIT;
 			if (strcmp(temp, "NORMAL") == 0) b.type = crs::NORMAL;
 			if (strcmp(temp, "BSDF") == 0) b.type = crs::BSDF;
 			if (strcmp(temp, "BRDF") == 0) b.type = crs::BRDF;
@@ -164,7 +165,7 @@ int main(int argc, const char * argv[]){
 		
 			host_bxdfs[i] = b;
 
-			cout << " Bxdf " << e.id << ", name: " << e.bxdf_name << ", type: " << temp << std::endl;
+			cout << " Bxdf " << e.id << ", name: " << e.bxdf_name << ", type (id): " << temp << " (" << b.type << ")" << std::endl;
 
 			i++;
 		}

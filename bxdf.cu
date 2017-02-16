@@ -22,11 +22,10 @@ __host__ int crs::BxdfTable::getBxdfIdbyName(std::string bxdfname) {
 	return i;
 }
 
-__device__ void crs::bxdf_NOHIT(HitRecord *r, PixelBuffer *p, int pathlength) {
-	float t = 0.5f*(r->in.direction.y + 1.0f);
-	// accumulate color
-	vec3 C = ((vec3(1.0f, 1.0f, 1.0f) * (1.0f - t)) + (t * vec3(0.5f, 0.7f, 1.0f))) / (float)pathlength;
-	p->color += C;
+__device__ void crs::bxdf_NOHIT(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength) {
+	// calculate and accumulate color
+	float t = 0.5 * (r->in.direction.y + 1.0f);
+	p->color += ((1.0f - t) * (vec3(1.0f, 1.0f, 1.0f)) + (t * b->ka)) / (float)pathlength;
 }
 
 __device__ void crs::bxdf_NORMAL(HitRecord *r, PixelBuffer *p, int pathlength) {
@@ -35,35 +34,41 @@ __device__ void crs::bxdf_NORMAL(HitRecord *r, PixelBuffer *p, int pathlength) {
 	p->color += C;
 }
 
-__device__ void crs::bxdf_BSDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed) {
-	// accumulate the cosine weighted color
-	float c = glm::dot(r->normal, r->in.direction);
-	float absorption = 0.25f;
-	p->color += (b->ka * (1.0f - absorption) * c) / (float)pathlength;
-	
-	// construct a new ray for the next bounce
+__device__ void crs::bxdf_BSDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int id) {
+	// accumulate the color, absorb 50%
+	float absorption = 0.5f;
+	p->color += (b->ka * r->in.attenuation * absorption) / (float)pathlength;
+
+	// generate a point within a unit sphere and transform according to location and normal
 	curandState rngState;
-	curand_init(crs::WangHash(seed), 0, 0, &rngState);
+	curand_init(crs::WangHash(seed)+id, 0, 0, &rngState);
+	vec3 t = crs::RandUniformInSphere(&rngState);
+	vec3 target = t + r->normal*0.5f + r->location;
 
+	// construct the new ray
+	r->in = Ray();
 	r->in.origin = r->location;
-	r->in.direction = glm::normalize(r->normal + crs::RandUniformSphere(&rngState, 1.0f));
-	r->in.length = FLT_MAX;
+	r->in.attenuation = glm::length( t );
+	r->in.direction = glm::normalize(target - r->location);
+
+	// reset the bxdf
+	r->bxdf = NOHIT;
 }
 
-__device__ void crs::bxdf_BRDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed) {
+__device__ void crs::bxdf_BRDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int id) {
 }
 
-__device__ void crs::bxdf_BTDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed) {
+__device__ void crs::bxdf_BTDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int id) {
 }
 
-__device__ void crs::bxdf_BSSDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed) {
+__device__ void crs::bxdf_BSSDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int id) {
 }
 
 __device__ void crs::bxdf_CONSTANT(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength) {
 	p->color += b->ka / (float)pathlength;
 }
 
-__device__ void crs::evaluateBxdf(Bxdf *bxdfList, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed) {
+__device__ void crs::evaluateBxdf(Bxdf *bxdfList, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int id) {
 	
 	// early exit if the hitrecord is marked as terminated
 	if(r->is_terminated){
@@ -72,30 +77,33 @@ __device__ void crs::evaluateBxdf(Bxdf *bxdfList, HitRecord *r, PixelBuffer *p, 
 	}
 
 	// retrieve the bxdf at intersection
-	int id = r->bxdf;
+	int bid = r->bxdf;
 
-	switch (bxdfList[id].type) {
+	switch (bxdfList[bid].type) {
+	case crs::NOHIT:
+		bxdf_NOHIT(&bxdfList[bid], r, p, pathlength);
+		break;
 	case crs::NORMAL:
 		bxdf_NORMAL(r, p, pathlength);
 		break;
 	case crs::BSDF:
-		bxdf_BSDF(&bxdfList[id], r, p, pathlength, seed);
+		bxdf_BSDF(&bxdfList[bid], r, p, pathlength, seed, id);
 		break;
 	case crs::BRDF:
-		bxdf_BRDF(&bxdfList[id], r, p, pathlength, seed);
+		bxdf_BRDF(&bxdfList[bid], r, p, pathlength, seed, id);
 		break;
 	case crs::BTDF:
-		bxdf_BTDF(&bxdfList[id], r, p, pathlength, seed);
+		bxdf_BTDF(&bxdfList[bid], r, p, pathlength, seed, id);
 		break;
 	case crs::BSSDF:
-		bxdf_BSSDF(&bxdfList[id], r, p, pathlength, seed);
+		bxdf_BSSDF(&bxdfList[bid], r, p, pathlength, seed, id);
 		break;
 	case crs::CONSTANT:
-		bxdf_CONSTANT(&bxdfList[id], r, p, pathlength);
+		bxdf_CONSTANT(&bxdfList[bid], r, p, pathlength);
 		break;
 	default:
 		// no valid bxdf assigned
-		bxdf_NOHIT(r, p, pathlength);
+		bxdf_NOHIT(&bxdfList[bid], r, p, pathlength);
 		break;
 	}
 
@@ -117,5 +125,5 @@ __global__ void crs::KERNEL_BXDF(Bxdf *bxdfList, HitRecord *hitRecords, PixelBuf
 	if (threadId >= width * height) return;
 	
 	// Evaluate
-	evaluateBxdf(bxdfList, &hitRecords[threadId], &pixelBuffer[threadId], pathlength, seed);
+	evaluateBxdf(bxdfList, &hitRecords[threadId], &pixelBuffer[threadId], pathlength, seed, threadId);
 }

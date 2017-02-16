@@ -47,19 +47,12 @@ namespace crs{
 	}
 
 	/*
-	Generate a uniform distribution within a a 1D range of [0, 1)
-	*/
-	inline __device__ float RandUniform1D(curandState *s){
-		return 1.0f - curand_uniform(s);
-	}
-
-	/*
 	Generate a uniform distribution within a unit square
 	*/
 	inline __device__ glm::vec2 RandUniformSquare(curandState *s){
 		glm::vec2 v;
-		v.x = 1.0f - curand_uniform(s);
-		v.y = 1.0f - curand_uniform(s);
+		v.x = curand_uniform(s);
+		v.y = curand_uniform(s);
 		return v;
 	}
 
@@ -98,9 +91,25 @@ namespace crs{
 	}
 
 	/*
-	Given a radius, generate a unform distribution over a sphere
+	Generate a uniform distribution within a unit sphere
 	*/
-	inline __device__ glm::vec3 RandUniformSphere(curandState *s, float radius){
+	inline __device__ glm::vec3 RandUniformInSphere(curandState *s){
+		glm::vec3 p;
+
+		// generate a point in a unit sphere using the rejection method
+		do{
+			p.x = 2.0f * curand_uniform(s) - 1.0f;
+			p.y = 2.0f * curand_uniform(s) - 1.0f;
+			p.z = 2.0f * curand_uniform(s) - 1.0f;
+		} while( glm::length(p) >= 1.0f );
+
+		return p;
+	}
+
+	/*
+	 * Given a radius, generate random point on a sphere
+	 */
+	inline __device__ glm::vec3 RandUniformOnSphere(curandState *s, float radius){
 		glm::vec3 p;
 
 		float u = curand_uniform(s);

@@ -35,11 +35,7 @@ namespace crs{
 		bool				is_terminated;		// termination flag
 
 		__host__ __device__ HitRecord(){
-			in.origin = vec3(0.0f, 0.0f, 0.0f);
-			in.direction = vec3(0.0f, 0.0f, 0.0f);
-			in.frequency = 0.0f;
-			in.time = 0.0f;
-			in.length = FLT_MAX;
+			in = Ray();
 			location = vec3(0.0f, 0.0f, 0.0f);
 			normal = vec3(0.0f, 0.0f, 0.0f);
 			hits = 0;
@@ -60,7 +56,7 @@ namespace crs{
 			location = vec3(0.0f, 0.0f, 0.0f);
 			normal = vec3(0.0f, 0.0f, 0.0f);
 			hits = 0;
-			bxdf = -1;
+			bxdf = 0;		// in the worst case, we hit the default bxdf
 			pathcounter = 0;
 			is_terminated = false;
 		};

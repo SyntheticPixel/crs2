@@ -25,17 +25,6 @@ using namespace std;
 using namespace glm;
 
 namespace crs {
-	typedef enum crs_Bxdf_Types {
-		// CRAYON BXDF types
-		NOHIT = 0x00,				// default bxdf, returns a constant color when no hit has been recorded
-		NORMAL,						// returns a color based on the normal at the intersection						
-		BSDF,						// bidirectional scattering distribution function
-		BRDF,						// bidirectional reflectance distribution function
-		BTDF,						// bidirectional transmittance distribution function
-		BSSDF,						// bidirectional scattering surface (subsurface) distribution function
-		CONSTANT,					// returns a constant color
-
-	}BXDFTYPE;
 
 	struct Bxdf {
 		BXDFTYPE		type;			// bxdf type
@@ -79,15 +68,15 @@ namespace crs {
 		int getBxdfIdbyName(std::string bxdfname);
 	};
 
-	__device__ void bxdf_NOHIT(HitRecord *r, PixelBuffer *p, int pathlength);
+	__device__ void bxdf_NOHIT(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength);
 	__device__ void bxdf_NORMAL(HitRecord *r, PixelBuffer *p, int pathlength);
-	__device__ void bxdf_BSDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed);
-	__device__ void bxdf_BRDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed);
-	__device__ void bxdf_BTDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed);
-	__device__ void bxdf_BSSDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed);
+	__device__ void bxdf_BSDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int id);
+	__device__ void bxdf_BRDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int id);
+	__device__ void bxdf_BTDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int id);
+	__device__ void bxdf_BSSDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int id);
 	__device__ void bxdf_CONSTANT(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength);
 
-	__device__ void evaluateBxdf(Bxdf *bxdfList, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed);
+	__device__ void evaluateBxdf(Bxdf *bxdfList, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int id);
 	__global__ void KERNEL_BXDF(Bxdf *bxdfList, HitRecord *hitRecord, PixelBuffer *pixelBuffer, int width, int height, int pathlength, unsigned int seed);
 }
 
