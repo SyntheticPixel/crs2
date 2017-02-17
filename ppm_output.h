@@ -40,7 +40,7 @@ namespace crs{
 	Save to 8-bit ppm file
 	params: data, width, height, filename
 	*/
-	void SavePPM(PixelBuffer* data, unsigned int w, unsigned int h, std::string filename){
+	void SavePPM(PixelBuffer* data, unsigned int w, unsigned int h, float gamma, std::string filename){
 
 		if(data == NULL){
 			cout << " Invalid data... no file saved" << "\n";
@@ -67,9 +67,15 @@ namespace crs{
 
 			vec3 t = a.getAverage();
 
-			r = FloatToShort(t.x);
-			g = FloatToShort(t.y);
-			b = FloatToShort(t.z);
+			// gamma correct
+			vec3 c;
+			c.x = pow(t.x , 1.0f/gamma);
+			c.y = pow(t.y , 1.0f/gamma);
+			c.z = pow(t.z , 1.0f/gamma);
+
+			r = FloatToShort(c.x);
+			g = FloatToShort(c.y);
+			b = FloatToShort(c.z);
 			outputFile << r << g << b;
 		}
 

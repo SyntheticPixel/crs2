@@ -48,11 +48,7 @@ namespace crs{
 
 		__host__ __device__ void reset(){
 			//result = vec3(0.0f, 0.0f, 0.0f);
-			in.origin = vec3(0.0f, 0.0f, 0.0f);
-			in.direction = vec3(0.0f, 0.0f, 0.0f);
-			in.frequency = 0.0f;
-			in.time = 0.0f;
-			in.length = FLT_MAX;
+			in = Ray();
 			location = vec3(0.0f, 0.0f, 0.0f);
 			normal = vec3(0.0f, 0.0f, 0.0f);
 			hits = 0;

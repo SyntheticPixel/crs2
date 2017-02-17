@@ -25,7 +25,8 @@ __host__ int crs::BxdfTable::getBxdfIdbyName(std::string bxdfname) {
 __device__ void crs::bxdf_NOHIT(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength) {
 	// calculate and accumulate color
 	float t = 0.5 * (r->in.direction.y + 1.0f);
-	p->color += ((1.0f - t) * (vec3(1.0f, 1.0f, 1.0f)) + (t * b->ka)) / (float)pathlength;
+	vec3 C = ((1.0f - t) * b->kd + (t * b->ka)) / (float)pathlength;
+	p->color += C;
 }
 
 __device__ void crs::bxdf_NORMAL(HitRecord *r, PixelBuffer *p, int pathlength) {
@@ -34,41 +35,74 @@ __device__ void crs::bxdf_NORMAL(HitRecord *r, PixelBuffer *p, int pathlength) {
 	p->color += C;
 }
 
-__device__ void crs::bxdf_BSDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int id) {
-	// accumulate the color, absorb 50%
-	float absorption = 0.5f;
-	p->color += (b->ka * r->in.attenuation * absorption) / (float)pathlength;
+// S for scatter : Lambertian bxdf
+__device__ void crs::bxdf_BSDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int tid) {
+
+	// accumulate the color
+	vec3 C = ( b->ka * b->kd * r->in.attenuation ) / (float)pathlength;
+	p->color += C;
+
+	// rng state
+	curandState rngState;
+	curand_init(crs::WangHash(seed)+tid, 0, 0, &rngState);
 
 	// generate a point within a unit sphere and transform according to location and normal
-	curandState rngState;
-	curand_init(crs::WangHash(seed)+id, 0, 0, &rngState);
 	vec3 t = crs::RandUniformInSphere(&rngState);
-	vec3 target = t + r->normal*0.5f + r->location;
+	vec3 target = t + r->normal + r->location;
 
-	// construct the new ray
-	r->in = Ray();
+	// construct the new ray for the next bounce
 	r->in.origin = r->location;
-	r->in.attenuation = glm::length( t );
 	r->in.direction = glm::normalize(target - r->location);
+	r->in.attenuation = glm::length(t);
 
-	// reset the bxdf
+	// reset the bxdf for the next bounce
 	r->bxdf = NOHIT;
 }
 
-__device__ void crs::bxdf_BRDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int id) {
+// R for Reflect : conductor/metal bxdf
+__device__ void crs::bxdf_BRDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int tid) {
+
+	// accumulate the color
+	vec3 C = ( b->ka * b->kd * r->in.attenuation) / (float)pathlength;
+	p->color += C;
+
+	// rng state
+	curandState rngState;
+	curand_init(crs::WangHash(seed)+tid, 0, 0, &rngState);
+
+	// generate a point within a unit sphere and transform according to location and normal
+	vec3 t = crs::RandUniformInSphere(&rngState);
+	vec3 target = t + r->normal + r->location;
+
+	// reflect the incoming ray
+	vec3 ref = r->in.direction - (2.0f * glm::dot(r->in.direction, r->normal) * r->normal);
+
+	vec3 f = t*0.25f + ref;
+
+	// construct the new ray for the next bounce
+	r->in.origin = r->location;
+	r->in.direction = glm::normalize(f);
+	r->in.attenuation = glm::length(f);
+
+	// reset the bxdf for the next bounce
+	r->bxdf = NOHIT;
+
 }
 
-__device__ void crs::bxdf_BTDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int id) {
+// T for Transmit : dielectric/glass bxdf
+__device__ void crs::bxdf_BTDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int tid) {
 }
 
-__device__ void crs::bxdf_BSSDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int id) {
+// SS for Subsurface : subsurface bxdf
+__device__ void crs::bxdf_BSSDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int tid) {
 }
 
+// C for constant : return a constant color
 __device__ void crs::bxdf_CONSTANT(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength) {
-	p->color += b->ka / (float)pathlength;
+	p->color += b->kd / (float)pathlength;
 }
 
-__device__ void crs::evaluateBxdf(Bxdf *bxdfList, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int id) {
+__device__ void crs::evaluateBxdf(Bxdf *bxdfList, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int tid) {
 	
 	// early exit if the hitrecord is marked as terminated
 	if(r->is_terminated){
@@ -76,7 +110,7 @@ __device__ void crs::evaluateBxdf(Bxdf *bxdfList, HitRecord *r, PixelBuffer *p, 
 		return;
 	}
 
-	// retrieve the bxdf at intersection
+	// retrieve the bxdf at the intersection
 	int bid = r->bxdf;
 
 	switch (bxdfList[bid].type) {
@@ -87,16 +121,16 @@ __device__ void crs::evaluateBxdf(Bxdf *bxdfList, HitRecord *r, PixelBuffer *p, 
 		bxdf_NORMAL(r, p, pathlength);
 		break;
 	case crs::BSDF:
-		bxdf_BSDF(&bxdfList[bid], r, p, pathlength, seed, id);
+		bxdf_BSDF(&bxdfList[bid], r, p, pathlength, seed, tid);
 		break;
 	case crs::BRDF:
-		bxdf_BRDF(&bxdfList[bid], r, p, pathlength, seed, id);
+		bxdf_BRDF(&bxdfList[bid], r, p, pathlength, seed, tid);
 		break;
 	case crs::BTDF:
-		bxdf_BTDF(&bxdfList[bid], r, p, pathlength, seed, id);
+		bxdf_BTDF(&bxdfList[bid], r, p, pathlength, seed, tid);
 		break;
 	case crs::BSSDF:
-		bxdf_BSSDF(&bxdfList[bid], r, p, pathlength, seed, id);
+		bxdf_BSSDF(&bxdfList[bid], r, p, pathlength, seed, tid);
 		break;
 	case crs::CONSTANT:
 		bxdf_CONSTANT(&bxdfList[bid], r, p, pathlength);

@@ -42,7 +42,7 @@ __device__ void crs::TestSphereIntersections(Sphere *sphere, unsigned int c, Hit
 			return;
 		}else{
 			// we have a hit
-			if(t > 0.0f){
+			if(t > 0.00001f){
 				r->in.length = t;
 				r->location = r->in.evaluate();
 				r->normal = glm::normalize(r->location - s.center);

@@ -16,6 +16,7 @@ using namespace rapidjson;
 int main(int argc, const char * argv[]){
 	Document		dom;
 	string			jsonfile;
+	string			output;
 	
 	CudaContext		cc;
 	
@@ -28,6 +29,8 @@ int main(int argc, const char * argv[]){
 	BxdfTable		bxdfTable;
 	Bxdf			*host_bxdfs;
 	Bxdf			*device_bxdfs;
+
+	float 			gamma_correction;
 
 	unsigned int spherecount = 0;
 	unsigned int bxdfcount = 0;
@@ -64,6 +67,8 @@ int main(int argc, const char * argv[]){
 		cout << " Rendersettings found..." << std::endl;
 		// read the rendersettings
 		Value *setting;
+		setting = Pointer("/rendersettings/output").Get(dom);
+		output = setting->GetString();
 		setting = Pointer("/rendersettings/width").Get(dom);
 		cc.width = setting->GetInt();
 		cout << " Image width : " << cc.width << std::endl;
@@ -75,9 +80,9 @@ int main(int argc, const char * argv[]){
 		cout << " Render samples : " << cc.samples << std::endl;
 		setting = Pointer("/rendersettings/pathlength").Get(dom);
 		cc.pathlength = setting->GetInt();
-		// make sure we have at least one bounce
-		if(cc.pathlength < 1) cc.pathlength = 1;
-		cout << " Sample pathlength : " << cc.pathlength << std::endl;
+		setting = Pointer("/rendersettings/gamma").Get(dom);
+		gamma_correction = setting->GetFloat();
+		cout << " Gamma correction : " << gamma_correction << std::endl;
 	}else{
 		cout << " Error parsing scene file, no rendersettings found!" << std::endl;
 		return EXIT_FAILURE;
@@ -162,6 +167,11 @@ int main(int argc, const char * argv[]){
 			b.ka.x = ka[0].GetFloat();
 			b.ka.y = ka[1].GetFloat();
 			b.ka.z = ka[2].GetFloat();
+
+			const Value& kd = (*itr)["kd"];
+			b.kd.x = kd[0].GetFloat();
+			b.kd.y = kd[1].GetFloat();
+			b.kd.z = kd[2].GetFloat();
 		
 			host_bxdfs[i] = b;
 
@@ -281,7 +291,7 @@ int main(int argc, const char * argv[]){
 		cc.EvaluateState();
 	}else{
 		// save the file
-		crs::SavePPM(cc.host_pixels, cc.width, cc.height, "output.ppm");
+		crs::SavePPM(cc.host_pixels, cc.width, cc.height, gamma_correction, output);
 		cout << " Output saved to " << "output.ppm" << std::endl;
 	}
 

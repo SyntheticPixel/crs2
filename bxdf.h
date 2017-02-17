@@ -28,11 +28,14 @@ namespace crs {
 
 	struct Bxdf {
 		BXDFTYPE		type;			// bxdf type
-		vec3			ka;				// albedo color
+		vec3			kd;				// diffuse reflection
+		vec3			ka;				// ambient reflection
+
 
 		__host__ __device__ Bxdf() {
 			type = NOHIT;
 			ka = vec3(0.0f, 0.0f, 0.0f);
+			kd = vec3(0.0f, 0.0f, 0.0f);
 		}
 
 		__host__ __device__ ~Bxdf() {}
@@ -70,13 +73,13 @@ namespace crs {
 
 	__device__ void bxdf_NOHIT(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength);
 	__device__ void bxdf_NORMAL(HitRecord *r, PixelBuffer *p, int pathlength);
-	__device__ void bxdf_BSDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int id);
-	__device__ void bxdf_BRDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int id);
-	__device__ void bxdf_BTDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int id);
-	__device__ void bxdf_BSSDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int id);
+	__device__ void bxdf_BSDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int tid);
+	__device__ void bxdf_BRDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int tid);
+	__device__ void bxdf_BTDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int tid);
+	__device__ void bxdf_BSSDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int tid);
 	__device__ void bxdf_CONSTANT(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength);
 
-	__device__ void evaluateBxdf(Bxdf *bxdfList, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int id);
+	__device__ void evaluateBxdf(Bxdf *bxdfList, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int tid);
 	__global__ void KERNEL_BXDF(Bxdf *bxdfList, HitRecord *hitRecord, PixelBuffer *pixelBuffer, int width, int height, int pathlength, unsigned int seed);
 }
 

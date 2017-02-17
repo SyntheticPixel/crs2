@@ -1,0 +1,88 @@
+{
+	"rendersettings": {
+		"output": "scene_diffuse.ppm",
+        "width": 512,
+        "height": 512,
+        "samples": 128,
+        "pathlength": 2,
+        "gamma": 1.0
+	},
+    "camera": {
+        "name": "camera",
+        "resolution": 10,
+        "fov": 45,
+        "position": [0.0, 0.0, 1.0],
+        "lookat": [0.0, 0.0, -1.0],
+        "up": [0.0, 1.0, 0.0]
+    },
+    "bxdfs": [
+		{
+		"name": "background",
+        "type": "NOHIT",
+        "ka": [0.60, 0.80, 1.0],
+        "kd": [1.0, 1.0, 1.0]
+		},
+		{
+		"name": "normal",
+        "type": "NORMAL",
+        "ka": [1.0, 1.0, 1.0],
+        "kd": [1.0, 1.0, 1.0]
+		},
+		{
+        "name": "white",
+        "type": "BSDF",
+        "ka": [0.5, 0.5, 0.5],
+        "kd": [1.0, 1.0, 1.0]
+		},
+		{
+        "name": "grey",
+        "type": "BSDF",
+        "ka": [0.5, 0.5, 0.5],
+        "kd": [0.5, 0.5, 0.5]
+		},
+		{
+        "name": "black",
+        "type": "BSDF",
+        "ka": [0.0, 0.0, 0.0],
+        "kd": [0.0, 0.0, 0.0]
+		},
+		{
+        "name": "red",
+        "type": "BSDF",
+        "ka": [1.0, 1.0, 1.0],
+        "kd": [1.0, 0.0, 0.0]
+		},
+		{
+        "name": "green",
+        "type": "BSDF",
+        "ka": [1.0, 1.0, 1.0],
+        "kd": [0.0, 1.0, 0.0]
+		},
+		{
+        "name": "blue",
+        "type": "BSDF",
+        "ka": [1.0, 1.0, 1.0],
+        "kd": [0.0, 0.0, 1.0]
+		}
+	],
+    "spheres": [
+		{
+    	"name": "sphere_1",
+        "center": [-0.6, 0.0, -1.0],
+        "radius": 0.5,
+        "bxdf": "white"
+        },
+        {
+    	"name": "sphere_2",
+        "center": [0.6, 0.0, -1.0],
+        "radius": 0.5,
+        "bxdf": "white"
+        },
+		{
+    	"name": "sphere_3",
+        "center": [0.0, -100.5, -1.0],
+        "radius": 100.0,
+        "bxdf": "white"
+        }
+	]
+}
