@@ -38,8 +38,18 @@ __device__ void crs::bxdf_NORMAL(HitRecord *r, PixelBuffer *p, int pathlength) {
 // S for scatter : Lambertian bxdf
 __device__ void crs::bxdf_BSDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int tid) {
 
+	/*
+	//TODO
+	float dist = distance(g_light_position, position);
+	float att = 1.0f / (a + dist * b + dist * dist * c);
+
+	// and then:
+	float lum_final = dot(...) * att;
+	*/
+
 	// accumulate the color
-	vec3 C = ( b->ka * b->kd * r->in.attenuation ) / (float)pathlength;
+	float NdL = glm::dot(r->normal, r->in.direction);
+	vec3 C = ( b->ka * b->kd * r->in.attenuation * NdL) / (float)pathlength;
 	p->color += C;
 
 	// rng state
@@ -63,7 +73,8 @@ __device__ void crs::bxdf_BSDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathle
 __device__ void crs::bxdf_BRDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int tid) {
 
 	// accumulate the color
-	vec3 C = ( b->ka * b->kd * r->in.attenuation) / (float)pathlength;
+	float NdL = glm::dot(r->normal, r->in.direction);
+	vec3 C = ( b->ka * b->kd * r->in.attenuation * NdL) / (float)pathlength;
 	p->color += C;
 
 	// rng state
@@ -77,7 +88,8 @@ __device__ void crs::bxdf_BRDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathle
 	// reflect the incoming ray
 	vec3 ref = r->in.direction - (2.0f * glm::dot(r->in.direction, r->normal) * r->normal);
 
-	vec3 f = t*0.25f + ref;
+	// shininess factor
+	vec3 f = t * b->sh + ref;
 
 	// construct the new ray for the next bounce
 	r->in.origin = r->location;

@@ -30,12 +30,14 @@ namespace crs {
 		BXDFTYPE		type;			// bxdf type
 		vec3			kd;				// diffuse reflection
 		vec3			ka;				// ambient reflection
+		float			sh;				// shine : 0.0 = lambert, 1.0 = mirror
 
 
 		__host__ __device__ Bxdf() {
 			type = NOHIT;
 			ka = vec3(0.0f, 0.0f, 0.0f);
 			kd = vec3(0.0f, 0.0f, 0.0f);
+			sh = 0.0f;
 		}
 
 		__host__ __device__ ~Bxdf() {}

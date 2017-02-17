@@ -172,7 +172,10 @@ int main(int argc, const char * argv[]){
 			b.kd.x = kd[0].GetFloat();
 			b.kd.y = kd[1].GetFloat();
 			b.kd.z = kd[2].GetFloat();
-		
+
+			const Value& sh = (*itr)["sh"];
+			b.sh = sh.GetFloat();
+
 			host_bxdfs[i] = b;
 
 			cout << " Bxdf " << e.id << ", name: " << e.bxdf_name << ", type (id): " << temp << " (" << b.type << ")" << std::endl;
