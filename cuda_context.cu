@@ -5,11 +5,10 @@ using namespace crs;
 
 __device__ void crs::BufferInit(HitRecord *r, PixelBuffer *p){
 	// init hitrecord buffer
-	r->reset();
+	*r = HitRecord();
 
 	// init all pixel buffer
-	p->color = vec3(0.0f, 0.0f, 0.0f);
-	p->samples = 0;
+	*p = PixelBuffer();
 
 }
 
@@ -24,6 +23,22 @@ __global__ void crs::KERNEL_INIT(HitRecord *hitrecords, PixelBuffer *buffer, int
 	BufferInit(&hitrecords[threadId], &buffer[threadId]);
 }
 
+__global__ void crs::KERNEL_ACCUMULATE(HitRecord *hitrecords, PixelBuffer *buffer, int w, int h) {
+
+	unsigned long blockId = blockIdx.x + blockIdx.y * gridDim.x;
+	unsigned long threadId = blockId * (blockDim.x * blockDim.y) + (threadIdx.y * blockDim.x) + threadIdx.x;
+
+	if (threadId >= w * h) return;
+
+	// accumulate
+	buffer[threadId].color += hitrecords[threadId].accumulator.color;
+	buffer[threadId].samples++;
+
+	// reset hitrecords for next sample
+	hitrecords[threadId].reset();
+
+}
+
 CudaContext::CudaContext(){
 	cuda_device_count = 0;
 	cuda_device_props = NULL;
@@ -33,7 +48,7 @@ CudaContext::CudaContext(){
 	width = 1;
 	height = 1;
 	samples = 1;
-	pathlength = 1;
+	depth = 1;
 	dimension = k2D;
 
 	host_pixels = NULL;

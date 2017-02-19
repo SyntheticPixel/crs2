@@ -12,6 +12,7 @@
 #include <fstream>
 #include <stdlib.h>
 #include <string>
+#include <math.h>
 
 #include <cuda.h>
 #include <cuda_runtime.h>
@@ -32,7 +33,11 @@ namespace crs{
 	Convert a float (0.0 < f < 1.0) to unsigned char
 	*/
 	unsigned char FloatToShort(float f){
-		return (unsigned char)(f*255.0f);
+		// clamp between 0.0 and 1.0
+		float v = std::fmax(0.0f, std::fmin(f, 1.0f));
+		
+		// convert float to char
+		return (unsigned char)(v*255.0f);
 	}
 
 	/*

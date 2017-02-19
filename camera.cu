@@ -46,17 +46,17 @@ __device__ void cast(HitRecord *r, Camera *camera, unsigned long id, unsigned in
 	float v = (((xy.y - 0.5f) + y_index) - (camera->height * 0.5f)) / camera->resolution;
 	float z = camera->focus / camera->resolution;
 
-	r->in.origin = camera->position;
+	r->wi.origin = camera->position;
 
-	r->in.direction.x = u;
-	r->in.direction.y = -v;
-	r->in.direction.z = -z;
+	r->wi.direction.x = u;
+	r->wi.direction.y = -v;
+	r->wi.direction.z = -z;
 
-	vec3 n = glm::normalize(r->in.origin + r->in.direction);
-	r->in.direction = n;
+	vec3 n = glm::normalize(r->wi.origin + r->wi.direction);
+	r->wi.direction = n;
 
-	r->in.frequency = 0.0f;
-	r->in.length = FLT_MAX;
+	r->wi.frequency = 0.0f;
+	r->wi.length = FLT_MAX;
 }
 
 // Generates rays in camera space

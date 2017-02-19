@@ -33,7 +33,6 @@ namespace crs{
 		vec3 	origin;				// ray origin
 		vec3 	direction;			// ray direction, normalized
 		float	length;				// ray length
-		float	attenuation;		// attenuation factor (=non-normaized ray length)
 		float	time;				// time of casting
 		float	frequency;			// lambda, light frequency of the ray
 
@@ -41,7 +40,6 @@ namespace crs{
 			origin = vec3(0.0f, 0.0f, 0.0f);
 			direction = vec3(0.0f, 0.0f, 0.0f);
 			length = FLT_MAX;		// initialize to max length
-			attenuation = 0.0f;
 			time = 0.0f;
 			frequency = 0.0f;
 		};

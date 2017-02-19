@@ -69,17 +69,23 @@ int main(int argc, const char * argv[]){
 		Value *setting;
 		setting = Pointer("/rendersettings/output").Get(dom);
 		output = setting->GetString();
+		
 		setting = Pointer("/rendersettings/width").Get(dom);
 		cc.width = setting->GetInt();
 		cout << " Image width : " << cc.width << std::endl;
+		
 		setting = Pointer("/rendersettings/height").Get(dom);
 		cc.height = setting->GetInt();
 		cout << " Image height : " << cc.height << std::endl;
+		
 		setting = Pointer("/rendersettings/samples").Get(dom);
 		cc.samples = setting->GetInt();
 		cout << " Render samples : " << cc.samples << std::endl;
-		setting = Pointer("/rendersettings/pathlength").Get(dom);
-		cc.pathlength = setting->GetInt();
+		
+		setting = Pointer("/rendersettings/depth").Get(dom);
+		cc.depth = setting->GetInt();
+		cout << " Path depth : " << cc.depth << std::endl;
+		
 		setting = Pointer("/rendersettings/gamma").Get(dom);
 		gamma_correction = setting->GetFloat();
 		cout << " Gamma correction : " << gamma_correction << std::endl;
@@ -163,11 +169,6 @@ int main(int argc, const char * argv[]){
 			if (strcmp(temp, "BSSDF") == 0) b.type = crs::BSSDF;
 			if (strcmp(temp, "CONSTANT") == 0) b.type = crs::CONSTANT;
 
-			const Value& ka = (*itr)["ka"];
-			b.ka.x = ka[0].GetFloat();
-			b.ka.y = ka[1].GetFloat();
-			b.ka.z = ka[2].GetFloat();
-
 			const Value& kd = (*itr)["kd"];
 			b.kd.x = kd[0].GetFloat();
 			b.kd.y = kd[1].GetFloat();
@@ -178,7 +179,9 @@ int main(int argc, const char * argv[]){
 
 			host_bxdfs[i] = b;
 
-			cout << " Bxdf " << e.id << ", name: " << e.bxdf_name << ", type (id): " << temp << " (" << b.type << ")" << std::endl;
+			//cout << " Bxdf " << e.id << ", name: " << e.bxdf_name << ", type (id): " << temp << " (" << b.type << ")" << std::endl;
+			//cout << " ->Kd: " << b.kd.x << "f, " << b.kd.y << "f, " << b.kd.z << "f" << std::endl;
+			//cout << " ->Sh: " << b.sh << "f" << std::endl;
 
 			i++;
 		}
@@ -267,13 +270,16 @@ int main(int argc, const char * argv[]){
 		cudaDeviceSynchronize();
 		
 		// for each bounce
-		for (int j = 0; j < cc.pathlength; j++){
+		for (int j = 0; j < cc.depth; j++){
 			crs::KERNEL_SPHEREINTERSECT <<<cc.gridSize, cc.blockSize>>>(device_spheres, spherecount, cc.device_hitRecords, cc.width, cc.height);
 			cudaDeviceSynchronize();
 
-			crs::KERNEL_BXDF <<<cc.gridSize, cc.blockSize >>>(device_bxdfs, cc.device_hitRecords, cc.device_pixels, cc.width, cc.height, cc.pathlength, clock());
+			crs::KERNEL_BXDF <<<cc.gridSize, cc.blockSize >>>(device_bxdfs, cc.device_hitRecords, cc.device_pixels, cc.width, cc.height, cc.depth, clock());
 			cudaDeviceSynchronize();
 		}
+
+		crs::KERNEL_ACCUMULATE<<<cc.gridSize, cc.blockSize >> >(cc.device_hitRecords, cc.device_pixels, cc.width, cc.height);
+		cudaDeviceSynchronize();
 
 		cout << "\r Rendered sample " << i + 1 << " of " << cc.samples;
 	}

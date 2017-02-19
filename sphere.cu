@@ -29,29 +29,30 @@ __device__ float crs::SphereHit(Sphere *s, Ray *r){
 
 __device__ void crs::TestSphereIntersections(Sphere *sphere, unsigned int c, HitRecord *r){
 
+	// early exit
+	if (r->terminated) return;
+
 	// loop over every sphere
 	unsigned int i;
 	for(i=0; i < c; i++){
 		// local copy
 		Sphere s = sphere[i];
 
-		float t = SphereHit(&s, &r->in);
+		float t = SphereHit(&s, &r->wi);
 
 		// make sure we keep the closest intersection
-		if (t >= r->in.length){
+		if (t >= r->wi.length){
 			return;
 		}else{
 			// we have a hit
-			if(t > 0.00001f){
-				r->in.length = t;
-				r->location = r->in.evaluate();
+			if(t > 0.0001f){
+				r->wi.length = t;
+				r->location = r->wi.evaluate();
 				r->normal = glm::normalize(r->location - s.center);
-				r->hits++;
 				r->bxdf = s.bxdf;
 			}
 		}
 	}
-
 }
 
 __global__ void crs::KERNEL_SPHEREINTERSECT(Sphere *spheres, unsigned int count, HitRecord *hitrecords, int w, int h){

@@ -130,7 +130,7 @@ namespace crs{
 		int 				width;
 		int 				height;
 		int 				samples;
-		int 				pathlength;
+		int 				depth;
 
 		ProblemDimension 	dimension;
 
@@ -171,6 +171,7 @@ namespace crs{
 
 	__device__ void BufferInit(HitRecord *r, PixelBuffer *p);
 	__global__ void KERNEL_INIT(HitRecord *hitrecords, PixelBuffer *buffer, int w, int h);
+	__global__ void KERNEL_ACCUMULATE(HitRecord *hitrecords, PixelBuffer *buffer, int w, int h);
 
 }
 

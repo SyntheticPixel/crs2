@@ -16,46 +16,40 @@
 
 #include "crs.h"
 #include "ray.h"
+#include "pixelbuffer.h"
 
 using namespace std;
 
 namespace crs{
 	class HitRecord{
 	public:
-		//vec3				result;				// accumulator for each bounce
-
-		crs::Ray 			in;					// incoming ray
+		crs::Ray 			wi;					// incoming ray
 		vec3				location;			// location of the hit
 		vec3				normal;				// normal at location
-
-		int					hits;				// number of hits; 0 = no intersections recorded
 		int					bxdf;				// material index
-
-		int					pathcounter;		// current bounce
-		bool				is_terminated;		// termination flag
+		PixelBuffer			accumulator;		// accumulator for the color/bounce
+		bool				terminated;			// termination flag
 
 		__host__ __device__ HitRecord(){
-			in = Ray();
+			wi = Ray();
 			location = vec3(0.0f, 0.0f, 0.0f);
 			normal = vec3(0.0f, 0.0f, 0.0f);
-			hits = 0;
-			bxdf = -1;
-			pathcounter = 0;
-			is_terminated = false;
+			bxdf = crs::NOHIT;
+			accumulator = PixelBuffer();
+			terminated = false;
+		};
+
+		__host__ __device__ void reset() {
+			wi = Ray();
+			location = vec3(0.0f, 0.0f, 0.0f);
+			normal = vec3(0.0f, 0.0f, 0.0f);
+			bxdf = crs::NOHIT;
+			accumulator.color = vec3(0.0f, 0.0f, 0.0f);
+			accumulator.samples = 0;
+			terminated = false;
 		};
 
 		__host__ __device__ ~HitRecord(){};
-
-		__host__ __device__ void reset(){
-			//result = vec3(0.0f, 0.0f, 0.0f);
-			in = Ray();
-			location = vec3(0.0f, 0.0f, 0.0f);
-			normal = vec3(0.0f, 0.0f, 0.0f);
-			hits = 0;
-			bxdf = 0;		// in the worst case, we hit the default bxdf
-			pathcounter = 0;
-			is_terminated = false;
-		};
 
 	};
 }

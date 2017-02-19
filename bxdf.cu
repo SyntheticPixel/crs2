@@ -22,35 +22,37 @@ __host__ int crs::BxdfTable::getBxdfIdbyName(std::string bxdfname) {
 	return i;
 }
 
-__device__ void crs::bxdf_NOHIT(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength) {
-	// calculate and accumulate color
-	float t = 0.5 * (r->in.direction.y + 1.0f);
-	vec3 C = ((1.0f - t) * b->kd + (t * b->ka)) / (float)pathlength;
-	p->color += C;
+__device__ void crs::bxdf_NOHIT(Bxdf *b, HitRecord *r) {
+	// calculate color
+	float t = 0.5 * (r->wi.direction.y + 1.0f);
+	vec3 C = ((1.0f - t) * glm::vec3(4.0f)) + (t * b->kd);
+	
+	// accumulate the bounce
+	r->accumulator.color += C*(float)(1.0f / M_PI);
+
+	// terminate the path
+	r->terminated = true;
 }
 
-__device__ void crs::bxdf_NORMAL(HitRecord *r, PixelBuffer *p, int pathlength) {
+__device__ void crs::bxdf_NORMAL(HitRecord *r) {
 	// accumulate color
-	vec3 C = (0.5f * (r->normal + vec3(1.0f, 1.0f, 1.0f))) / (float)pathlength;
-	p->color += C;
+	vec3 C = 0.5f * (r->normal + vec3(1.0f, 1.0f, 1.0f));
+	
+	// accumulate the bounce
+	r->accumulator.color += C;
+
+	// terminate the path
+	r->terminated = true;
 }
 
 // S for scatter : Lambertian bxdf
-__device__ void crs::bxdf_BSDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int tid) {
-
-	/*
-	//TODO
-	float dist = distance(g_light_position, position);
-	float att = 1.0f / (a + dist * b + dist * dist * c);
-
-	// and then:
-	float lum_final = dot(...) * att;
-	*/
-
-	// accumulate the color
-	float NdL = glm::dot(r->normal, r->in.direction);
-	vec3 C = ( b->ka * b->kd * r->in.attenuation * NdL) / (float)pathlength;
-	p->color += C;
+__device__ void crs::bxdf_BSDF(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid) {
+	
+	// calculate the color
+	float NdL = glm::dot(r->normal, r->wi.direction);
+	vec3 C = (glm::vec3(1.0f) - b->kd) * NdL;
+	
+	r->accumulator.color += (C * (float)(1.0f / M_PI));
 
 	// rng state
 	curandState rngState;
@@ -61,21 +63,19 @@ __device__ void crs::bxdf_BSDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathle
 	vec3 target = t + r->normal + r->location;
 
 	// construct the new ray for the next bounce
-	r->in.origin = r->location;
-	r->in.direction = glm::normalize(target - r->location);
-	r->in.attenuation = glm::length(t);
-
-	// reset the bxdf for the next bounce
-	r->bxdf = NOHIT;
+	r->wi.origin = r->location;
+	r->wi.direction = glm::normalize(target - r->location);
+	r->wi.length = FLT_MAX;
 }
 
 // R for Reflect : conductor/metal bxdf
-__device__ void crs::bxdf_BRDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int tid) {
+__device__ void crs::bxdf_BRDF(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid) {
 
-	// accumulate the color
-	float NdL = glm::dot(r->normal, r->in.direction);
-	vec3 C = ( b->ka * b->kd * r->in.attenuation * NdL) / (float)pathlength;
-	p->color += C;
+	// calculate the color
+	float NdL = glm::dot(r->normal, r->wi.direction);
+	vec3 C = (glm::vec3(1.0f) - b->kd) * NdL;
+
+	r->accumulator.color += (C * (float)(1.0f / M_PI));
 
 	// rng state
 	curandState rngState;
@@ -86,82 +86,78 @@ __device__ void crs::bxdf_BRDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathle
 	vec3 target = t + r->normal + r->location;
 
 	// reflect the incoming ray
-	vec3 ref = r->in.direction - (2.0f * glm::dot(r->in.direction, r->normal) * r->normal);
+	vec3 ref = r->wi.direction - (2.0f * glm::dot(r->wi.direction, r->normal) * r->normal);
 
 	// shininess factor
-	vec3 f = t * b->sh + ref;
+	vec3 f = (t * b->sh) + ref;
 
 	// construct the new ray for the next bounce
-	r->in.origin = r->location;
-	r->in.direction = glm::normalize(f);
-	r->in.attenuation = glm::length(f);
-
-	// reset the bxdf for the next bounce
-	r->bxdf = NOHIT;
-
+	r->wi.origin = r->location;
+	r->wi.direction = glm::normalize(f);
+	r->wi.length = FLT_MAX;
 }
 
 // T for Transmit : dielectric/glass bxdf
-__device__ void crs::bxdf_BTDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int tid) {
+__device__ void crs::bxdf_BTDF(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid) {
 }
 
 // SS for Subsurface : subsurface bxdf
-__device__ void crs::bxdf_BSSDF(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int tid) {
+__device__ void crs::bxdf_BSSDF(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid) {
 }
 
 // C for constant : return a constant color
-__device__ void crs::bxdf_CONSTANT(Bxdf *b, HitRecord *r, PixelBuffer *p, int pathlength) {
-	p->color += b->kd / (float)pathlength;
+__device__ void crs::bxdf_CONSTANT(Bxdf *b, HitRecord *r) {
+
+	// accumulate the bounce
+	r->accumulator.color += b->kd;
+
+	// terminate the path
+	r->terminated = true;
 }
 
 __device__ void crs::evaluateBxdf(Bxdf *bxdfList, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int tid) {
 	
-	// early exit if the hitrecord is marked as terminated
-	if(r->is_terminated){
-		//r->reset();
-		return;
-	}
+	// early exit
+	if (r->terminated) return;
 
-	// retrieve the bxdf at the intersection
 	int bid = r->bxdf;
 
 	switch (bxdfList[bid].type) {
 	case crs::NOHIT:
-		bxdf_NOHIT(&bxdfList[bid], r, p, pathlength);
+		bxdf_NOHIT(&bxdfList[0], r);
 		break;
 	case crs::NORMAL:
-		bxdf_NORMAL(r, p, pathlength);
+		bxdf_NORMAL(r);
 		break;
 	case crs::BSDF:
-		bxdf_BSDF(&bxdfList[bid], r, p, pathlength, seed, tid);
+		bxdf_BSDF(&bxdfList[bid], r, seed, tid);
 		break;
 	case crs::BRDF:
-		bxdf_BRDF(&bxdfList[bid], r, p, pathlength, seed, tid);
+		bxdf_BRDF(&bxdfList[bid], r, seed, tid);
 		break;
 	case crs::BTDF:
-		bxdf_BTDF(&bxdfList[bid], r, p, pathlength, seed, tid);
+		bxdf_BTDF(&bxdfList[bid], r, seed, tid);
 		break;
 	case crs::BSSDF:
-		bxdf_BSSDF(&bxdfList[bid], r, p, pathlength, seed, tid);
+		bxdf_BSSDF(&bxdfList[bid], r, seed, tid);
 		break;
 	case crs::CONSTANT:
-		bxdf_CONSTANT(&bxdfList[bid], r, p, pathlength);
+		bxdf_CONSTANT(&bxdfList[bid], r);
 		break;
 	default:
 		// no valid bxdf assigned
-		bxdf_NOHIT(&bxdfList[bid], r, p, pathlength);
+		bxdf_NOHIT(&bxdfList[0], r);
 		break;
 	}
+		
+	// increase sample count
+	r->accumulator.samples++;
 
-	// mark another bounce
-	r->pathcounter++;
+	// mark path terminated if we reached our depth
+	if (r->accumulator.samples >= pathlength) r->terminated = true;
 
-	// increase sample count if we reached the end of our path
-	if(r->pathcounter >= pathlength){
-		// reset the hit record for the next sample
-		r->reset();
-		p->samples += 1;
-	}
+	// reset the bxdf for the next bounce
+	r->bxdf = crs::NOHIT;
 }
 
 __global__ void crs::KERNEL_BXDF(Bxdf *bxdfList, HitRecord *hitRecords, PixelBuffer *pixelBuffer, int width, int height, int pathlength, unsigned int seed) {
