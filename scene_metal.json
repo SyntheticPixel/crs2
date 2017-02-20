@@ -3,9 +3,9 @@
 		"output": "scene_metal.ppm",
         "width": 1024,
         "height": 512,
-        "samples": 1024,
-        "pathlength": 4,
-        "gamma": 1.4
+        "samples": 128,
+        "depth": 4,
+        "gamma": 1.0
 	},
     "camera": {
         "name": "camera",
@@ -19,70 +19,60 @@
 		{
 		"name": "background",
         "type": "NOHIT",
-        "ka": [0.25, 0.50, 1.0],
-        "kd": [1.0, 1.0, 1.0],
+        "kd": [0.5, 1.0, 2.0],
         "sh": 0.0
 		},
 		{
 		"name": "normal",
         "type": "NORMAL",
-        "ka": [1.0, 1.0, 1.0],
         "kd": [1.0, 1.0, 1.0],
         "sh": 0.0
 		},
 		{
-        "name": "white_d",
+        "name": "grey_d",
         "type": "BSDF",
-        "ka": [0.5, 0.5, 0.5],
-        "kd": [1.0, 1.0, 1.0],
+        "kd": [0.5, 0.5, 0.5],
         "sh": 0.0
 		},
 		{
         "name": "white_r99",
         "type": "BRDF",
-        "ka": [0.5, 0.5, 0.5],
         "kd": [1.0, 1.0, 1.0],
         "sh": 0.99
 		},
 		{
         "name": "white_r50",
         "type": "BRDF",
-        "ka": [0.5, 0.5, 0.5],
         "kd": [1.0, 1.0, 1.0],
         "sh": 0.50
 		},
 		{
         "name": "white_r05",
         "type": "BRDF",
-        "ka": [0.5, 0.5, 0.5],
         "kd": [1.0, 1.0, 1.0],
         "sh": 0.05
 		},
 		{
         "name": "black",
-        "type": "BRDF",
-        "ka": [0.0, 0.0, 0.0],
-        "kd": [0.0, 0.0, 0.0],
+        "type": "BSDF",
+        "kd": [0.000, 0.000, 0.000],
         "sh": 0.0
 		},
 		{
         "name": "red",
-        "type": "BRDF",
-        "ka": [1.0, 1.0, 1.0],
+        "type": "BSDF",
         "kd": [1.0, 0.0, 0.0],
         "sh": 0.0
 		},
 		{
         "name": "green",
-        "type": "BRDF",
-        "ka": [1.0, 1.0, 1.0],
+        "type": "BSDF",
         "kd": [0.0, 1.0, 0.0],
         "sh": 0.0
 		},
 		{
         "name": "blue",
-        "type": "BRDF",
-        "ka": [1.0, 1.0, 1.0],
+        "type": "BSDF",
         "kd": [0.0, 0.0, 1.0],
         "sh": 0.0
 		}
@@ -92,19 +82,19 @@
     	"name": "sphere_1",
         "center": [-0.6, 0.0, -1.0],
         "radius": 0.25,
-        "bxdf": "white_r05"
+        "bxdf": "normal"
         },
         {
     	"name": "sphere_2",
         "center": [0.0, 0.0, -1.0],
         "radius": 0.25,
-        "bxdf": "normal"
+        "bxdf": "white_r50"
         },
 		{
     	"name": "sphere_3",
         "center": [0.6, 0.0, -1.0],
         "radius": 0.25,
-        "bxdf": "white_r50"
+        "bxdf": "blue"
         },
 		{
     	"name": "sphere_4",

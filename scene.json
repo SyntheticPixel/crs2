@@ -1,11 +1,11 @@
 {
 	"rendersettings": {
-		"output": "scene_diffuse.ppm",
+		"output": "scene.ppm",
         "width": 512,
         "height": 512,
-        "samples": 256,
-        "depth": 2,
-        "gamma": 1.0
+        "samples": 64,
+        "depth": 4,
+		"gamma": 1.0
 	},
     "camera": {
         "name": "camera",
@@ -19,49 +19,22 @@
 		{
 		"name": "background",
         "type": "NOHIT",
-        "kd": [1.0, 1.0, 1.0],
+        "ka": [0.33, 0.66, 1.0],
+		"kd": [1.0, 1.0, 1.0],
 		"sh": 0.0
 		},
 		{
 		"name": "normal",
         "type": "NORMAL",
-        "kd": [1.0, 1.0, 1.0],
+        "ka": [1.0, 1.0, 1.0],
+		"kd": [1.0, 1.0, 1.0],
 		"sh": 0.0
 		},
 		{
         "name": "white",
         "type": "BSDF",
-        "kd": [1.0, 1.0, 1.0],
-		"sh": 0.0
-		},
-		{
-        "name": "grey",
-        "type": "BSDF",
-        "kd": [0.2, 0.2, 0.2],
-		"sh": 0.0
-		},
-		{
-        "name": "black",
-        "type": "BSDF",
-        "kd": [0.01, 0.01, 0.01],
-		"sh": 0.0
-		},
-		{
-        "name": "red",
-        "type": "BSDF",
-        "kd": [1.0, 0.0, 0.0],
-		"sh": 0.0
-		},
-		{
-        "name": "green",
-        "type": "BSDF",
-        "kd": [0.0, 1.0, 0.0],
-		"sh": 0.0
-		},
-		{
-        "name": "blue",
-        "type": "BSDF",
-        "kd": [0.0, 0.0, 1.0],
+        "ka": [1.0, 1.0, 1.0],
+		"kd": [1.0, 1.0, 1.0],
 		"sh": 0.0
 		}
 	],
@@ -70,19 +43,19 @@
     	"name": "sphere_1",
         "center": [-0.6, 0.0, -1.0],
         "radius": 0.5,
-        "bxdf": "red"
+        "bxdf": "white"
         },
         {
     	"name": "sphere_2",
         "center": [0.6, 0.0, -1.0],
         "radius": 0.5,
-        "bxdf": "green"
+        "bxdf": "white"
         },
 		{
     	"name": "sphere_3",
         "center": [0.0, -100.5, -1.0],
         "radius": 100.0,
-        "bxdf": "blue"
+        "bxdf": "white"
         }
 	]
 }
