@@ -163,19 +163,24 @@ int main(int argc, const char * argv[]){
 
 			if (strcmp(temp, "NOHIT") == 0) b.type = crs::NOHIT;
 			if (strcmp(temp, "NORMAL") == 0) b.type = crs::NORMAL;
-			if (strcmp(temp, "BSDF") == 0) b.type = crs::BSDF;
-			if (strcmp(temp, "BRDF") == 0) b.type = crs::BRDF;
-			if (strcmp(temp, "BTDF") == 0) b.type = crs::BTDF;
-			if (strcmp(temp, "BSSDF") == 0) b.type = crs::BSSDF;
+			if (strcmp(temp, "LAMBERT") == 0) b.type = crs::LAMBERT;
+			if (strcmp(temp, "CONDUCTOR") == 0) b.type = crs::CONDUCTOR;
+			if (strcmp(temp, "DIELECTRIC") == 0) b.type = crs::DIELECTRIC;
+			if (strcmp(temp, "EMISSION") == 0) b.type = crs::EMISSION;
+			if (strcmp(temp, "SUBSURFACE") == 0) b.type = crs::SUBSURFACE;
 			if (strcmp(temp, "CONSTANT") == 0) b.type = crs::CONSTANT;
+			if (strcmp(temp, "SIMPLE_SKY") == 0) b.type = crs::SIMPLE_SKY;
 
 			const Value& kd = (*itr)["kd"];
 			b.kd.x = kd[0].GetFloat();
 			b.kd.y = kd[1].GetFloat();
 			b.kd.z = kd[2].GetFloat();
 
-			const Value& sh = (*itr)["sh"];
-			b.sh = sh.GetFloat();
+			const Value& rpt = (*itr)["rpt"];
+			b.rpt = rpt.GetFloat();
+
+			const Value& ior = (*itr)["ior"];
+			b.ior = ior.GetFloat();
 
 			host_bxdfs[i] = b;
 

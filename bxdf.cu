@@ -22,13 +22,9 @@ __host__ int crs::BxdfTable::getBxdfIdbyName(std::string bxdfname) {
 	return i;
 }
 
-__device__ void crs::bxdf_NOHIT(Bxdf *b, HitRecord *r) {
+__device__ void crs::bxdf_NOHIT(HitRecord *r) {
 	// calculate color
-	float t = 0.5 * (r->wi.direction.y + 1.0f);
-	vec3 C = ((1.0f - t) * glm::vec3(4.0f)) + (t * b->kd);
-	
-	// accumulate the bounce
-	r->accumulator.color += C*(float)(1.0f / M_PI);
+	r->accumulator.color += glm::vec3(0.0f, 0.0f, 0.0f);
 
 	// terminate the path
 	r->terminated = true;
@@ -46,7 +42,7 @@ __device__ void crs::bxdf_NORMAL(HitRecord *r) {
 }
 
 // S for scatter : Lambertian bxdf
-__device__ void crs::bxdf_BSDF(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid) {
+__device__ void crs::bxdf_LAMBERT(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid) {
 	
 	// calculate the color
 	float NdL = glm::dot(r->normal, r->wi.direction);
@@ -69,7 +65,7 @@ __device__ void crs::bxdf_BSDF(Bxdf *b, HitRecord *r, unsigned int seed, unsigne
 }
 
 // R for Reflect : conductor/metal bxdf
-__device__ void crs::bxdf_BRDF(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid) {
+__device__ void crs::bxdf_CONDUCTOR(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid) {
 
 	// calculate the color
 	float NdL = glm::dot(r->normal, r->wi.direction);
@@ -89,7 +85,7 @@ __device__ void crs::bxdf_BRDF(Bxdf *b, HitRecord *r, unsigned int seed, unsigne
 	vec3 ref = r->wi.direction - (2.0f * glm::dot(r->wi.direction, r->normal) * r->normal);
 
 	// shininess factor
-	vec3 f = (t * b->sh) + ref;
+	vec3 f = (t * b->rpt) + ref;
 
 	// construct the new ray for the next bounce
 	r->wi.origin = r->location;
@@ -98,11 +94,58 @@ __device__ void crs::bxdf_BRDF(Bxdf *b, HitRecord *r, unsigned int seed, unsigne
 }
 
 // T for Transmit : dielectric/glass bxdf
-__device__ void crs::bxdf_BTDF(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid) {
+__device__ void crs::bxdf_DIELECTRIC(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid) {
+
+	// reflected ray
+	vec3 reflected = r->wi.direction - (2.0f * glm::dot(r->wi.direction, r->normal) * r->normal);
+
+	float ni_over_nt;		// refraction index
+	vec3 refracted;			// refracted direction
+	vec3 no;				// outward normal
+	bool ref = false;
+
+	float dt = glm::dot(r->wi.direction, r->normal);
+
+	if( dt > 0.0f){
+		no = -r->normal;
+		ni_over_nt = b->ior;
+	}else{
+		no = r->normal;
+		ni_over_nt = 1.0f / b->ior;
+	}
+
+	// reflected or refracted?
+	float discriminant = 1.0f - ni_over_nt * ni_over_nt * (1.0f - (dt*dt));
+	if(discriminant > 0){
+		refracted = ni_over_nt * (r->wi.direction - (r->normal * dt)) - r->normal * sqrt(discriminant);
+		ref = true;
+	}
+
+	if(ref){
+		// construct the new ray for the next bounce
+		r->wi.origin = r->location;
+		r->wi.direction = glm::normalize(refracted);
+		r->wi.length = FLT_MAX;
+
+	}else{
+		// construct the new ray for the next bounce
+		r->wi.origin = r->location;
+		r->wi.direction = glm::normalize(reflected);
+		r->wi.length = FLT_MAX;
+	}
+}
+
+// E for Emission : energy emitting bxdf
+__device__ void crs::bxdf_EMISSION(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid) {
+	// accumulate the bounce
+	r->accumulator.color += b->kd;
+
+	// terminate the path
+	r->terminated = true;
 }
 
 // SS for Subsurface : subsurface bxdf
-__device__ void crs::bxdf_BSSDF(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid) {
+__device__ void crs::bxdf_SUBSURFACE(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid) {
 }
 
 // C for constant : return a constant color
@@ -115,38 +158,61 @@ __device__ void crs::bxdf_CONSTANT(Bxdf *b, HitRecord *r) {
 	r->terminated = true;
 }
 
+__device__ void crs::bxdf_SIMPLE_SKY(Bxdf *b, HitRecord *r){
+	// calculate color
+	float t = 0.5 * (r->wi.direction.y + 1.0f);
+	vec3 C = ((1.0f - t) * glm::vec3(b->ior * M_PI)) + (t * b->kd);
+
+	// accumulate the bounce
+	r->accumulator.color += C*(float)(1.0f / M_PI);
+
+	// terminate the path
+	r->terminated = true;
+}
+
 __device__ void crs::evaluateBxdf(Bxdf *bxdfList, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int tid) {
 	
 	// early exit
 	if (r->terminated) return;
 
 	int bid = r->bxdf;
+	Bxdf d = bxdfList[0];
 
 	switch (bxdfList[bid].type) {
 	case crs::NOHIT:
-		bxdf_NOHIT(&bxdfList[0], r);
+		bxdf_NOHIT(r);
 		break;
 	case crs::NORMAL:
 		bxdf_NORMAL(r);
 		break;
-	case crs::BSDF:
-		bxdf_BSDF(&bxdfList[bid], r, seed, tid);
+	case crs::LAMBERT:
+		bxdf_LAMBERT(&bxdfList[bid], r, seed, tid);
 		break;
-	case crs::BRDF:
-		bxdf_BRDF(&bxdfList[bid], r, seed, tid);
+	case crs::CONDUCTOR:
+		bxdf_CONDUCTOR(&bxdfList[bid], r, seed, tid);
 		break;
-	case crs::BTDF:
-		bxdf_BTDF(&bxdfList[bid], r, seed, tid);
+	case crs::DIELECTRIC:
+		bxdf_DIELECTRIC(&bxdfList[bid], r, seed, tid);
 		break;
-	case crs::BSSDF:
-		bxdf_BSSDF(&bxdfList[bid], r, seed, tid);
+	case crs::EMISSION:
+		bxdf_EMISSION(&bxdfList[bid], r, seed, tid);
+		break;
+	case crs::SUBSURFACE:
+		bxdf_SUBSURFACE(&bxdfList[bid], r, seed, tid);
 		break;
 	case crs::CONSTANT:
 		bxdf_CONSTANT(&bxdfList[bid], r);
 		break;
+	case crs::SIMPLE_SKY:
+		bxdf_SIMPLE_SKY(&bxdfList[bid], r);
+		break;
 	default:
 		// no valid bxdf assigned
-		bxdf_NOHIT(&bxdfList[0], r);
+		if( d.type == crs::SIMPLE_SKY ){
+			bxdf_SIMPLE_SKY(&d, r);
+		}else{
+			bxdf_NOHIT(r);
+		}
 		break;
 	}
 		

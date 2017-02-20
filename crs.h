@@ -51,11 +51,13 @@ namespace crs{
 		// CRAYON BXDF types
 		NOHIT = 0x00,				// default bxdf, returns a constant color when no hit has been recorded
 		NORMAL,						// returns a color based on the normal at the intersection
-		BSDF,						// bidirectional scattering distribution function
-		BRDF,						// bidirectional reflectance distribution function
-		BTDF,						// bidirectional transmittance distribution function
-		BSSDF,						// bidirectional scattering surface (subsurface) distribution function
+		LAMBERT,					// bidirectional scattering distribution function
+		CONDUCTOR,					// bidirectional reflectance distribution function
+		DIELECTRIC,					// bidirectional transmittance distribution function
+		EMISSION,					// light material
+		SUBSURFACE,					// bidirectional scattering surface (subsurface) distribution function
 		CONSTANT,					// returns a constant color
+		SIMPLE_SKY,					// a simple sky model
 
 	}BXDFTYPE;
 

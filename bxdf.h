@@ -29,13 +29,15 @@ namespace crs {
 	struct Bxdf {
 		BXDFTYPE		type;			// bxdf type
 		vec3			kd;				// diffuse reflection/absorption
-		float			sh;				// shine : 0.0 = lambert, 1.0 = mirror
+		float			rpt;			// ray perturbation : 0.0 = mirror, 1.0 = lambert
+		float			ior;			// index of reflection/refraction
 
 
 		__host__ __device__ Bxdf() {
 			type = NOHIT;
 			kd = vec3(0.0f, 0.0f, 0.0f);
-			sh = 0.0f;
+			rpt = 0.0f;
+			ior = 1.0f;
 		}
 
 		__host__ __device__ ~Bxdf() {}
@@ -71,13 +73,15 @@ namespace crs {
 		int getBxdfIdbyName(std::string bxdfname);
 	};
 
-	__device__ void bxdf_NOHIT(Bxdf *b, HitRecord *r);
+	__device__ void bxdf_NOHIT(HitRecord *r);
 	__device__ void bxdf_NORMAL(HitRecord *r);
-	__device__ void bxdf_BSDF(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid);
-	__device__ void bxdf_BRDF(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid);
-	__device__ void bxdf_BTDF(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid);
-	__device__ void bxdf_BSSDF(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid);
+	__device__ void bxdf_LAMBERT(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid);
+	__device__ void bxdf_CONDUCTOR(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid);
+	__device__ void bxdf_DIELECTRIC(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid);
+	__device__ void bxdf_EMISSION(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid);
+	__device__ void bxdf_SUBSURFACE(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid);
 	__device__ void bxdf_CONSTANT(Bxdf *b, HitRecord *r);
+	__device__ void bxdf_SIMPLE_SKY(Bxdf *b, HitRecord *r);
 
 	__device__ void evaluateBxdf(Bxdf *bxdfList, HitRecord *r, PixelBuffer *p, int pathlength, unsigned int seed, unsigned int tid);
 	__global__ void KERNEL_BXDF(Bxdf *bxdfList, HitRecord *hitRecord, PixelBuffer *pixelBuffer, int width, int height, int pathlength, unsigned int seed);
