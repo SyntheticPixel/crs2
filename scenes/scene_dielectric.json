@@ -1,9 +1,9 @@
 {
 	"rendersettings": {
 		"output": "../scenes/scene_dielectric.ppm",
-        "width": 1920,
-        "height": 1080,
-        "samples": 1024,
+        "width": 1024,
+        "height": 512,
+        "samples": 512,
         "depth": 8,
         "gamma": 1.0
 	},
@@ -31,8 +31,8 @@
         "ior": 1.0
 		},
 		{
-        "name": "white",
-        "type": "LAMBERT",
+        "name": "light",
+        "type": "EMISSION",
         "kd": [1.0, 1.0, 1.0],
         "rpt": 0.0,
         "ior": 1.0
@@ -59,9 +59,9 @@
         "ior": 1.0
 		},
 		{
-        "name": "black",
+        "name": "white",
         "type": "LAMBERT",
-        "kd": [0.000, 0.000, 0.000],
+        "kd": [1.000, 1.000, 1.000],
         "rpt": 0.0,
         "ior": 1.0
 		},
@@ -104,13 +104,32 @@
     	"name": "sphere_3",
         "center": [0.3, 0.0, -2.0],
         "radius": 0.25,
-        "bxdf": "white_r50"
+        "bxdf": "white_r05"
         },
 		{
     	"name": "sphere_4",
         "center": [0.0, -100.25, -1.0],
         "radius": 100.0,
-        "bxdf": "white_r05"
+        "bxdf": "white"
+        },
+		{
+    	"name": "sphere_5",
+        "center": [-1.0, 1.30, -1.0],
+        "radius": 0.50,
+        "bxdf": "light"
+        },
+		{
+    	"name": "sphere_6",
+        "center": [0.0, 1.30, -1.0],
+        "radius": 0.50,
+        "bxdf": "light"
+        },
+		{
+    	"name": "sphere_7",
+        "center": [1.0, 1.30, -1.0],
+        "radius": 0.50,
+        "bxdf": "light"
         }
+
 	]
 }
