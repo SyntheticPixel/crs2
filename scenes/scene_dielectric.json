@@ -1,17 +1,17 @@
 {
 	"rendersettings": {
-		"output": "../scenes/scene_dielectric.ppm",
-        "width": 1024,
-        "height": 512,
-        "samples": 512,
-        "depth": 8,
+		"output": "../../scenes/scene_dielectric.ppm",
+        "width": 1920,
+        "height": 1080,
+        "samples": 2000,
+        "depth": 16,
         "gamma": 1.0
 	},
     "camera": {
         "name": "camera",
         "resolution": 10,
         "fov": 45,
-        "position": [0.0, 0.0, 1.0],
+        "position": [0.0, 0.0, 0.50],
         "lookat": [0.0, 0.0, -1.0],
         "up": [0.0, 1.0, 0.0]
     },
@@ -21,7 +21,7 @@
         "type": "SIMPLE_SKY",
         "kd": [0.5, 1.0, 2.0],
         "rpt": 0.0,
-        "ior": 1.666
+        "ior": 1.33
 		},
 		{
 		"name": "normal",
@@ -33,16 +33,37 @@
 		{
         "name": "light",
         "type": "EMISSION",
-        "kd": [1.0, 1.0, 1.0],
+        "kd": [3.0, 3.0, 3.0],
         "rpt": 0.0,
         "ior": 1.0
 		},
 		{
-        "name": "glass",
+        "name": "glass-110",
         "type": "DIELECTRIC",
         "kd": [1.0, 1.0, 1.0],
         "rpt": 0.0,
-        "ior": 1.025
+        "ior": 1.10
+		},
+		{
+        "name": "glass-125",
+        "type": "DIELECTRIC",
+        "kd": [1.0, 1.0, 1.0],
+        "rpt": 0.0,
+        "ior": 1.25
+		},
+		{
+        "name": "glass-140",
+        "type": "DIELECTRIC",
+        "kd": [1.0, 1.0, 1.0],
+        "rpt": 0.0,
+        "ior": 1.40
+		},
+		{
+        "name": "glass-150",
+        "type": "DIELECTRIC",
+        "kd": [1.0, 1.0, 1.0],
+        "rpt": 0.0,
+        "ior": 1.50
 		},
 		{
         "name": "white_r50",
@@ -95,39 +116,81 @@
         "bxdf": "normal"
         },
         {
-    	"name": "sphere_2",
+    	"name": "glass0",
+        "center": [-0.30, 0.0, -1.0],
+        "radius": 0.15,
+        "bxdf": "glass-140"
+        },
+		{
+    	"name": "glass1",
+        "center": [-0.20, 0.0, -1.0],
+        "radius": 0.07,
+        "bxdf": "glass-110"
+        },
+		{
+    	"name": "glass2",
+        "center": [-0.10, 0.0, -1.0],
+        "radius": 0.07,
+        "bxdf": "glass-110"
+        },
+		{
+    	"name": "glass3",
         "center": [0.0, 0.0, -1.0],
-        "radius": 0.25,
-        "bxdf": "glass"
+        "radius": 0.07,
+        "bxdf": "glass-140"
+        },
+		{
+    	"name": "glass4",
+        "center": [0.10, 0.0, -1.0],
+        "radius": 0.07,
+        "bxdf": "glass-125"
+        },
+		{
+    	"name": "glass5",
+        "center": [0.20, 0.0, -1.0],
+        "radius": 0.07,
+        "bxdf": "glass-140"
+        },
+		{
+    	"name": "glass6",
+        "center": [0.30, 0.0, -1.0],
+        "radius": 0.07,
+        "bxdf": "glass-110"
+        },
+		{
+    	"name": "glass7",
+        "center": [0.40, 0.0, -1.0],
+        "radius": 0.07,
+        "bxdf": "glass-125"
         },
 		{
     	"name": "sphere_3",
         "center": [0.3, 0.0, -2.0],
         "radius": 0.25,
-        "bxdf": "white_r05"
+        "bxdf": "normal"
         },
 		{
     	"name": "sphere_4",
         "center": [0.0, -100.25, -1.0],
         "radius": 100.0,
-        "bxdf": "white"
+        "bxdf": "white_r50"
         },
 		{
     	"name": "sphere_5",
         "center": [-1.0, 1.30, -1.0],
-        "radius": 0.50,
+        "radius": 0.30,
         "bxdf": "light"
         },
 		{
     	"name": "sphere_6",
         "center": [0.0, 1.30, -1.0],
-        "radius": 0.50,
+        "radius": 0.30,
         "bxdf": "light"
         },
 		{
     	"name": "sphere_7",
         "center": [1.0, 1.30, -1.0],
-        "radius": 0.50,
+        "radius": 0.30,
         "bxdf": "light"
         }
 
