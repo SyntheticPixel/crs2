@@ -1,0 +1,116 @@
+{
+	"rendersettings": {
+		"output": "scene_dielectric.ppm",
+        "width": 1024,
+        "height": 512,
+        "samples": 64,
+        "depth": 8,
+        "gamma": 1.0
+	},
+    "camera": {
+        "name": "camera",
+        "resolution": 10,
+        "fov": 45,
+        "position": [0.0, 0.0, 1.0],
+        "lookat": [0.0, 0.0, -1.0],
+        "up": [0.0, 1.0, 0.0]
+    },
+    "bxdfs": [
+		{
+		"name": "sky",
+        "type": "SIMPLE_SKY",
+        "kd": [1.6, 2.2, 3.0],
+        "rpt": 0.0,
+        "ior": 1.33
+		},
+		{
+		"name": "normal",
+        "type": "NORMAL",
+        "kd": [1.0, 1.0, 1.0],
+        "rpt": 0.0,
+        "ior": 1.0
+		},
+		{
+        "name": "white",
+        "type": "LAMBERT",
+        "kd": [1.0, 1.0, 1.0],
+        "rpt": 0.0,
+        "ior": 1.0
+		},
+		{
+        "name": "glass",
+        "type": "DIELECTRIC",
+        "kd": [1.0, 1.0, 1.0],
+        "rpt": 0.0,
+        "ior": 1.75
+		},
+		{
+        "name": "white_r50",
+        "type": "CONDUCTOR",
+        "kd": [1.0, 1.0, 1.0],
+        "rpt": 0.50,
+        "ior": 1.0
+		},
+		{
+        "name": "white_r05",
+        "type": "CONDUCTOR",
+        "kd": [1.0, 1.0, 1.0],
+        "rpt": 0.05,
+        "ior": 1.0
+		},
+		{
+        "name": "black",
+        "type": "LAMBERT",
+        "kd": [0.000, 0.000, 0.000],
+        "rpt": 0.0,
+        "ior": 1.0
+		},
+		{
+        "name": "red",
+        "type": "LAMBERT",
+        "kd": [1.0, 0.0, 0.0],
+        "rpt": 0.0,
+        "ior": 1.0
+		},
+		{
+        "name": "green",
+        "type": "LAMBERT",
+        "kd": [0.0, 1.0, 0.0],
+        "rpt": 0.0,
+        "ior": 1.0
+		},
+		{
+        "name": "blue",
+        "type": "LAMBERT",
+        "kd": [0.0, 0.0, 1.0],
+        "rpt": 0.0,
+        "ior": 1.0
+		}
+	],
+    "spheres": [
+		{
+    	"name": "sphere_1",
+        "center": [-0.3, 0.0, -2.0],
+        "radius": 0.25,
+        "bxdf": "red"
+        },
+        {
+    	"name": "sphere_2",
+        "center": [0.0, 0.0, -1.0],
+        "radius": 0.25,
+        "bxdf": "glass"
+        },
+		{
+    	"name": "sphere_3",
+        "center": [0.3, 0.0, -2.0],
+        "radius": 0.25,
+        "bxdf": "green"
+        },
+		{
+    	"name": "sphere_4",
+        "center": [0.0, -100.25, -1.0],
+        "radius": 100.0,
+        "bxdf": "white"
+        }
+	]
+}

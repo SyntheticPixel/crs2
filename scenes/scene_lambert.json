@@ -1,0 +1,81 @@
+{
+	"rendersettings": {
+		"output": "scene_lambert.ppm",
+        "width": 1024,
+        "height": 512,
+        "samples": 64,
+        "depth": 4,
+        "gamma": 1.0
+	},
+    "camera": {
+        "name": "camera",
+        "resolution": 10,
+        "fov": 45,
+        "position": [0.0, 0.0, 1.0],
+        "lookat": [0.0, 0.0, -1.0],
+        "up": [0.0, 1.0, 0.0]
+    },
+    "bxdfs": [
+		{
+		"name": "sky",
+        "type": "SIMPLE_SKY",
+        "kd": [1.0, 1.0, 1.0],
+        "rpt": 0.0,
+        "ior": 1.33
+		},
+		{
+		"name": "white",
+        "type": "LAMBERT",
+        "kd": [1.0, 1.0, 1.0],
+		"rpt": 0.0,
+		"ior": 1.0
+		},
+		{
+		"name": "red",
+        "type": "LAMBERT",
+        "kd": [1.0, 0.0, 0.0],
+		"rpt": 0.0,
+		"ior": 1.0
+		},
+		{
+        "name": "green",
+        "type": "LAMBERT",
+        "kd": [0.0, 1.0, 0.0],
+		"rpt": 0.25,
+		"ior": 1.0
+		},
+		{
+        "name": "blue",
+        "type": "LAMBERT",
+        "kd": [0.0, 0.0, 1.0],
+		"rpt": 0.0,
+		"ior": 1.0
+		}
+	],
+    "spheres": [
+		{
+    	"name": "sphere_1",
+        "center": [-0.6, 0.0, -1.0],
+        "radius": 0.25,
+        "bxdf": "red"
+        },
+        {
+    	"name": "sphere_2",
+        "center": [0.0, 0.0, -1.0],
+        "radius": 0.25,
+        "bxdf": "green"
+        },
+		{
+    	"name": "sphere_3",
+        "center": [0.6, 0.0, -1.0],
+        "radius": 0.25,
+        "bxdf": "blue"
+        },
+		{
+    	"name": "sphere_4",
+        "center": [0.0, -100.50, -1.0],
+        "radius": 100.25,
+        "bxdf": "white"
+        }
+	]
+}

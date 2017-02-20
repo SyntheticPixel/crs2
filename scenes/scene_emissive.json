@@ -1,0 +1,121 @@
+{
+	"rendersettings": {
+		"output": "scene_emissive.ppm",
+        "width": 1024,
+        "height": 512,
+        "samples": 128,
+        "depth": 4,
+        "gamma": 1.0
+	},
+    "camera": {
+        "name": "camera",
+        "resolution": 10,
+        "fov": 45,
+        "position": [0.0, 0.0, 1.0],
+        "lookat": [0.0, 0.0, -1.0],
+        "up": [0.0, 1.0, 0.0]
+    },
+    "bxdfs": [
+		{
+		"name": "sky",
+        "type": "SIMPLE_SKY",
+        "kd": [1.4, 1.8, 3.2],
+        "rpt": 0.0,
+        "ior": 1.33
+		},
+		{
+		"name": "normal",
+        "type": "NORMAL",
+        "kd": [1.0, 1.0, 1.0],
+		"rpt": 0.0,
+		"ior": 1.0
+		},
+		{
+        "name": "emission_white",
+        "type": "EMISSION",
+        "kd": [2.0, 2.0, 2.0],
+		"rpt": 0.0,
+		"ior": 1.0
+		},
+		{
+        "name": "white",
+        "type": "CONDUCTOR",
+        "kd": [1.0, 1.0, 1.0],
+		"rpt": 0.25,
+		"ior": 1.0
+		},
+		{
+        "name": "emission_red",
+        "type": "EMISSION",
+        "kd": [1.0, 0.5, 0.5],
+		"rpt": 0.0,
+		"ior": 1.0
+		},
+		{
+        "name": "emission_red-green",
+        "type": "EMISSION",
+        "kd": [1.0, 1.0, 0.5],
+		"rpt": 0.0,
+		"ior": 1.0
+		},
+		{
+        "name": "emission_green",
+        "type": "EMISSION",
+        "kd": [0.5, 1.0, 0.5],
+		"rpt": 0.0,
+		"ior": 1.0
+		},
+		{
+        "name": "emission_green-blue",
+        "type": "EMISSION",
+        "kd": [0.5, 1.0, 1.0],
+		"rpt": 0.0,
+		"ior": 1.0
+		},
+		{
+        "name": "emission_blue",
+        "type": "EMISSION",
+        "kd": [0.5, 0.5, 1.0],
+		"rpt": 0.0,
+		"ior": 1.0
+		}
+	],
+    "spheres": [
+		{
+    	"name": "sphere_1",
+        "center": [-0.6, 0.0, -1.0],
+        "radius": 0.20,
+        "bxdf": "emission_red"
+        },
+		{
+    	"name": "sphere_1b",
+        "center": [-0.3, -0.18, -1.0],
+        "radius": 0.05,
+        "bxdf": "emission_red-green"
+        },
+        {
+    	"name": "sphere_2",
+        "center": [0.0, 0.0, -1.0],
+        "radius": 0.20,
+        "bxdf": "emission_green"
+        },
+		{
+    	"name": "sphere_2b",
+        "center": [0.3, -0.18, -1.0],
+        "radius": 0.05,
+        "bxdf": "emission_green-blue"
+        },
+		{
+    	"name": "sphere_3",
+        "center": [0.6, 0.0, -1.0],
+        "radius": 0.20,
+        "bxdf": "emission_blue"
+        },
+		{
+    	"name": "sphere_4",
+        "center": [0.0, -100.25, -1.0],
+        "radius": 100.0,
+        "bxdf": "white"
+        }
+	]
+}
