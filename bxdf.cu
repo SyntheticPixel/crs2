@@ -99,29 +99,45 @@ __device__ void crs::bxdf_DIELECTRIC(Bxdf *b, HitRecord *r, unsigned int seed, u
 	// reflected ray
 	vec3 reflected = r->wi.direction - (2.0f * glm::dot(r->wi.direction, r->normal) * r->normal);
 
-	float ni_over_nt;		// refraction index
-	vec3 refracted;			// refracted direction
-	vec3 no;				// outward normal
-	bool ref = false;
+	float	ni_over_nt;			// refraction index
+	vec3	refracted;			// refracted direction
+	vec3	no;					// outward normal
+	bool	refl = false;		// refracted or reflected?
+	
+	float	cos;				// cosine for schlick approximation
+	float	schlick;			// schlick approximation
 
 	float dt = glm::dot(r->wi.direction, r->normal);
 
 	if( dt > 0.0f){
 		no = -r->normal;
 		ni_over_nt = b->ior;
+		cos = b->ior * dt / r->wi.length;
+
 	}else{
 		no = r->normal;
 		ni_over_nt = 1.0f / b->ior;
+		cos = -dt / r->wi.length;
 	}
+
+	// schlick approximation
+	float r0 = ( 1.0f - b->ior) / ( 1.0f + b->ior);
+	r0 = r0*r0;
+	schlick = r0 + (1 - r0)*pow((1.0f - cos), 5.0f);
 
 	// reflected or refracted?
 	float discriminant = 1.0f - ni_over_nt * ni_over_nt * (1.0f - (dt*dt));
 	if(discriminant > 0){
 		refracted = ni_over_nt * (r->wi.direction - (r->normal * dt)) - r->normal * sqrt(discriminant);
-		ref = true;
+		refl = true;
 	}
 
-	if(ref){
+	// rng state
+	curandState rngState;
+	curand_init(crs::WangHash(seed) + tid, 0, 0, &rngState);
+	if (curand_uniform(&rngState) < schlick) refl = false;
+
+	if(refl){
 		// construct the new ray for the next bounce
 		r->wi.origin = r->location;
 		r->wi.direction = glm::normalize(refracted);
