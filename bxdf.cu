@@ -47,8 +47,8 @@ __device__ void crs::bxdf_LAMBERT(Bxdf *b, HitRecord *r, unsigned int seed, unsi
 	// calculate the color
 	float NdL = glm::dot(r->normal, r->wi.direction);
 	vec3 C = (glm::vec3(1.0f) - b->kd) * NdL;
-	
-	r->accumulator.color += (C * (float)(1.0f / M_PI));
+
+	r->accumulator.color += C;
 
 	// rng state
 	curandState rngState;
@@ -71,7 +71,7 @@ __device__ void crs::bxdf_CONDUCTOR(Bxdf *b, HitRecord *r, unsigned int seed, un
 	float NdL = glm::dot(r->normal, r->wi.direction);
 	vec3 C = (glm::vec3(1.0f) - b->kd) * NdL;
 
-	r->accumulator.color += (C * (float)(1.0f / M_PI));
+	r->accumulator.color += C;
 
 	// rng state
 	curandState rngState;
@@ -84,7 +84,7 @@ __device__ void crs::bxdf_CONDUCTOR(Bxdf *b, HitRecord *r, unsigned int seed, un
 	// reflect the incoming ray
 	vec3 ref = r->wi.direction - (2.0f * glm::dot(r->wi.direction, r->normal) * r->normal);
 
-	// shininess factor
+	// perturbate the reflected ray
 	vec3 f = (t * b->rpt) + ref;
 
 	// construct the new ray for the next bounce
@@ -177,10 +177,10 @@ __device__ void crs::bxdf_CONSTANT(Bxdf *b, HitRecord *r) {
 __device__ void crs::bxdf_SIMPLE_SKY(Bxdf *b, HitRecord *r){
 	// calculate color
 	float t = 0.5 * (r->wi.direction.y + 1.0f);
-	vec3 C = ((1.0f - t) * glm::vec3(b->ior * M_PI)) + (t * b->kd);
+	vec3 C = ((1.0f - t) * glm::vec3(b->ior)) + (t * b->kd);
 
 	// accumulate the bounce
-	r->accumulator.color += C*(float)(1.0f / M_PI);
+	r->accumulator.color += C;
 
 	// terminate the path
 	r->terminated = true;

@@ -32,12 +32,15 @@ namespace crs{
 	@brief
 	Convert a float (0.0 < f < 1.0) to unsigned char
 	*/
-	unsigned char FloatToShort(float f){
+	unsigned char FloatToShort(float f, float g){
 		// clamp between 0.0 and 1.0
 		float v = std::fmax(0.0f, std::fmin(f, 1.0f));
-		
+
+		// gamma correct
+		float c = pow(v , (1.0f/g));
+
 		// convert float to char
-		return (unsigned char)(v*255.0f);
+		return (unsigned char)(c*255.99f);
 	}
 
 	/*
@@ -72,15 +75,9 @@ namespace crs{
 
 			vec3 t = a.getAverage();
 
-			// gamma correct
-			vec3 c;
-			c.x = pow(t.x , 1.0f/gamma);
-			c.y = pow(t.y , 1.0f/gamma);
-			c.z = pow(t.z , 1.0f/gamma);
-
-			r = FloatToShort(c.x);
-			g = FloatToShort(c.y);
-			b = FloatToShort(c.z);
+			r = FloatToShort(t.x, gamma);
+			g = FloatToShort(t.y, gamma);
+			b = FloatToShort(t.z, gamma);
 			outputFile << r << g << b;
 		}
 
