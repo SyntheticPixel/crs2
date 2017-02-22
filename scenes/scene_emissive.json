@@ -1,9 +1,9 @@
 {
 	"rendersettings": {
-		"output": "scene_emissive.ppm",
+		"output": "../scenes/scene_emissive.ppm",
         "width": 1024,
         "height": 512,
-        "samples": 128,
+        "samples": 256,
         "depth": 4,
         "gamma": 1.0
 	},
@@ -18,10 +18,10 @@
     "bxdfs": [
 		{
 		"name": "sky",
-        "type": "SIMPLE_SKY",
-        "kd": [1.4, 1.8, 3.2],
+        "type": "NOHIT",
+        "kd": [1.0, 1.0, 1.0],
         "rpt": 0.0,
-        "ior": 1.33
+        "ior": 1.0
 		},
 		{
 		"name": "normal",
@@ -47,35 +47,21 @@
 		{
         "name": "emission_red",
         "type": "EMISSION",
-        "kd": [1.0, 0.5, 0.5],
-		"rpt": 0.0,
-		"ior": 1.0
-		},
-		{
-        "name": "emission_red-green",
-        "type": "EMISSION",
-        "kd": [1.0, 1.0, 0.5],
+        "kd": [2.0, 1.0, 1.0],
 		"rpt": 0.0,
 		"ior": 1.0
 		},
 		{
         "name": "emission_green",
         "type": "EMISSION",
-        "kd": [0.5, 1.0, 0.5],
-		"rpt": 0.0,
-		"ior": 1.0
-		},
-		{
-        "name": "emission_green-blue",
-        "type": "EMISSION",
-        "kd": [0.5, 1.0, 1.0],
+        "kd": [1.0, 2.0, 1.0],
 		"rpt": 0.0,
 		"ior": 1.0
 		},
 		{
         "name": "emission_blue",
         "type": "EMISSION",
-        "kd": [0.5, 0.5, 1.0],
+        "kd": [1.0, 1.0, 2.0],
 		"rpt": 0.0,
 		"ior": 1.0
 		}
@@ -87,23 +73,11 @@
         "radius": 0.20,
         "bxdf": "emission_red"
         },
-		{
-    	"name": "sphere_1b",
-        "center": [-0.3, -0.18, -1.0],
-        "radius": 0.05,
-        "bxdf": "emission_red-green"
-        },
         {
     	"name": "sphere_2",
         "center": [0.0, 0.0, -1.0],
         "radius": 0.20,
         "bxdf": "emission_green"
-        },
-		{
-    	"name": "sphere_2b",
-        "center": [0.3, -0.18, -1.0],
-        "radius": 0.05,
-        "bxdf": "emission_green-blue"
         },
 		{
     	"name": "sphere_3",

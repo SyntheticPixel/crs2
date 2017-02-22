@@ -1,11 +1,11 @@
 {
 	"rendersettings": {
-		"output": "../../scenes/scene_conductor.ppm",
+		"output": "../scenes/scene_conductor.ppm",
         "width": 1024,
         "height": 512,
         "samples": 128,
         "depth": 4,
-        "gamma": 1.0
+        "gamma": 2.0
 	},
     "camera": {
         "name": "camera",
@@ -19,9 +19,9 @@
 		{
 		"name": "sky",
         "type": "SIMPLE_SKY",
-        "kd": [1.4, 1.8, 3.2],
+        "kd": [0.6, 0.8, 1.0],
         "rpt": 0.0,
-        "ior": 1.33
+        "ior": 1.0
 		},
 		{
 		"name": "normal",
@@ -61,7 +61,7 @@
 		{
         "name": "black",
         "type": "LAMBERT",
-        "kd": [0.000, 0.000, 0.000],
+        "kd": [-0.01, -0.01, -0.01],
         "rpt": 0.0,
         "ior": 1.0
 		},
@@ -92,7 +92,7 @@
     	"name": "sphere_1",
         "center": [-0.6, 0.0, -1.0],
         "radius": 0.25,
-        "bxdf": "white_r05"
+        "bxdf": "red"
         },
         {
     	"name": "sphere_2",
@@ -110,7 +110,7 @@
     	"name": "sphere_4",
         "center": [0.0, -100.25, -1.0],
         "radius": 100.0,
-        "bxdf": "white_r05"
+        "bxdf": "grey_d"
         }
 	]
 }

@@ -1,0 +1,42 @@
+{
+	"rendersettings": {
+		"output": "../scenes/scene_furnace.ppm",
+        "width": 512,
+        "height": 512,
+        "samples": 32,
+        "depth": 4,
+        "gamma": 1.0
+	},
+    "camera": {
+        "name": "camera",
+        "resolution": 10,
+        "fov": 45,
+        "position": [0.0, 0.0, 1.0],
+        "lookat": [0.0, 0.0, -1.0],
+        "up": [0.0, 1.0, 0.0]
+    },
+    "bxdfs": [
+		{
+		"name": "furnace",
+        "type": "SIMPLE_SKY",
+        "kd": [1.0, 1.0, 1.0],
+        "rpt": 0.0,
+        "ior": 1.0
+		},
+		{
+		"name": "TEST",
+        "type": "LAMBERT",
+        "kd": [0.5, 0.5, 0.5],
+		"rpt": 0.0,
+		"ior": 1.0
+		}
+	],
+    "spheres": [
+		{
+    	"name": "test_surface",
+        "center": [0.0, 0.0, -1.0],
+        "radius": 0.5,
+        "bxdf": "TEST"
+        }
+	]
+}

@@ -1,11 +1,11 @@
 {
 	"rendersettings": {
-		"output": "scene_lambert.ppm",
+		"output": "../scenes/scene_lambert.ppm",
         "width": 1024,
         "height": 512,
-        "samples": 64,
+        "samples": 256,
         "depth": 4,
-        "gamma": 1.0
+        "gamma": 2.0
 	},
     "camera": {
         "name": "camera",
@@ -19,9 +19,9 @@
 		{
 		"name": "sky",
         "type": "SIMPLE_SKY",
-        "kd": [1.0, 1.0, 1.0],
+        "kd": [0.6, 0.8, 1.0],
         "rpt": 0.0,
-        "ior": 1.33
+        "ior": 1.0
 		},
 		{
 		"name": "white",
@@ -55,19 +55,19 @@
     "spheres": [
 		{
     	"name": "sphere_1",
-        "center": [-0.6, 0.0, -1.0],
+        "center": [-0.6, 0.1, -1.0],
         "radius": 0.25,
         "bxdf": "red"
         },
         {
     	"name": "sphere_2",
-        "center": [0.0, 0.0, -1.0],
+        "center": [0.0, 0.1, -1.0],
         "radius": 0.25,
         "bxdf": "green"
         },
 		{
     	"name": "sphere_3",
-        "center": [0.6, 0.0, -1.0],
+        "center": [0.6, 0.1, -1.0],
         "radius": 0.25,
         "bxdf": "blue"
         },
