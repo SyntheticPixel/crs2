@@ -48,6 +48,7 @@ __device__ void crs::bxdf_LAMBERT(Bxdf *b, HitRecord *r, unsigned int seed, unsi
 	float NdL = glm::dot(r->normal, r->wi.direction);
 	vec3 C = (glm::vec3(1.0f) - b->kd) * NdL;
 
+	// add the result
 	r->accumulator.color += C;
 
 	// rng state
@@ -56,6 +57,7 @@ __device__ void crs::bxdf_LAMBERT(Bxdf *b, HitRecord *r, unsigned int seed, unsi
 
 	// generate a point within a unit sphere and transform according to location and normal
 	vec3 t = crs::RandUniformInSphere(&rngState);
+	//vec3 t = crs::RandCosineHemisphere(&rngState, r->normal);
 	vec3 target = t + r->normal + r->location;
 
 	// construct the new ray for the next bounce
@@ -71,6 +73,7 @@ __device__ void crs::bxdf_CONDUCTOR(Bxdf *b, HitRecord *r, unsigned int seed, un
 	float NdL = glm::dot(r->normal, r->wi.direction);
 	vec3 C = (glm::vec3(1.0f) - b->kd) * NdL;
 
+	// add the result
 	r->accumulator.color += C;
 
 	// rng state
@@ -99,6 +102,7 @@ __device__ void crs::bxdf_DIELECTRIC(Bxdf *b, HitRecord *r, unsigned int seed, u
 	float	ni_over_nt;			// refraction index
 	vec3	refracted;			// refracted ray
 	vec3	reflected;			// reflected ray
+	vec3	final;				// final ray
 	vec3	no;					// outward normal
 	bool	refl = false;		// refracted or reflected?
 	
@@ -139,18 +143,26 @@ __device__ void crs::bxdf_DIELECTRIC(Bxdf *b, HitRecord *r, unsigned int seed, u
 	if(refl){
 		// calculate reflected ray
 		reflected = r->wi.direction - (2.0f * glm::dot(r->wi.direction, r->normal) * r->normal);
-
-		// construct the new ray for the next bounce
-		r->wi.origin = r->location;
-		r->wi.direction = glm::normalize(reflected);
-		r->wi.length = FLT_MAX;
+		final = reflected;
 	}else{
-		// construct the new ray for the next bounce
-		r->wi.origin = r->location;
-		r->wi.direction = glm::normalize(refracted);
-		r->wi.length = FLT_MAX;
-
+		final = refracted;
 	}
+
+	// perturbate the resulting ray
+	vec3 t = crs::RandUniformInSphere(&rngState);
+	vec3 target = t + no + r->location;
+	vec3 f = (t * b->rpt) + final;
+
+	// construct the new ray for the next bounce
+	r->wi.origin = r->location;
+	r->wi.direction = glm::normalize(f);
+	r->wi.length = FLT_MAX;
+
+	// calculate the color
+	float NdL = glm::dot(r->normal, r->wi.direction);
+	vec3 C = (glm::vec3(1.0f) - b->kd) * NdL;
+
+	r->accumulator.color += C;
 }
 
 // E for Emission : energy emitting bxdf

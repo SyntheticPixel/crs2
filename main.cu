@@ -128,7 +128,15 @@ int main(int argc, const char * argv[]){
 		setting = Pointer("/camera/up/2").Get(dom);
 		host_camera->up.z = setting->GetFloat();
 
-		host_camera->focus = (float)host_camera->width;
+		setting = Pointer("/camera/fov").Get(dom);
+		host_camera->fov = setting->GetFloat();
+
+		setting = Pointer("/camera/aperture").Get(dom);
+		host_camera->aperture = setting->GetFloat();
+
+		// make the camera current
+		host_camera->updateFOV();
+		host_camera->updateMatrix();
 
 	}else{
 		cout << " Error parsing scene file, no camera found!" << std::endl;

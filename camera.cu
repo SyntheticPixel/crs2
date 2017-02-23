@@ -5,6 +5,7 @@
 
 #define GLM_FORCE_CUDA
 #include <glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "camera.h"
 #include "rand.h"
@@ -12,23 +13,31 @@
 using namespace std;
 using namespace crs;
 
-crs::Camera::Camera(){
+__host__ __device__ crs::Camera::Camera(){
 	width = 100;
 	height = 100;
 	resolution = 1.0f;
-	focus = 1.0f;
+	focusplane = 1.0f;
+
+	fov = 90.0f;			// default 90° vertical fov
+	aperture = 0.0f;
 }
 
-crs::Camera::Camera(int w, int h, int r, float f){
-	width = w;
-	height = h;
-	resolution = r;
-	if(resolution == 0.0f) resolution = 1.0f;
-	focus = f;
+__host__ __device__ crs::Camera::~Camera(){
+
 }
 
-crs::Camera::~Camera(){
+__host__ __device__ void crs::Camera::updateFOV(){
+	// given the vertical fov, calculate the distance to the focal plane
+	//float theta = fov * ((float)M_PI/180.0f);
+	//float half_height = height * 0.5f;
 
+	// TODO
+	focusplane = width;//*0.5f;
+}
+
+__host__ __device__ void crs::Camera::updateMatrix(){
+	matrix = glm::lookAt(position, lookat, up);
 }
 
 __device__ void cast(HitRecord *r, Camera *camera, unsigned long id, unsigned int seed){
@@ -44,13 +53,22 @@ __device__ void cast(HitRecord *r, Camera *camera, unsigned long id, unsigned in
 
 	float u = (((xy.x - 0.5f) + x_index) - (camera->width * 0.5f)) / camera->resolution;
 	float v = (((xy.y - 0.5f) + y_index) - (camera->height * 0.5f)) / camera->resolution;
-	float z = camera->focus / camera->resolution;
+	float z = camera->focusplane / camera->resolution;
 
-	r->wi.origin = camera->position;
+	vec2 disc = crs::RandUniformDisc(&rngState) * camera->aperture;
+
+	vec3 dof;
+	dof.x = camera->position.x + disc.x;
+	dof.y = camera->position.y + disc.y;
+	dof.z = camera->position.z;
+
+	r->wi.origin = dof;
 
 	r->wi.direction.x = u;
 	r->wi.direction.y = -v;
 	r->wi.direction.z = -z;
+
+	//transform to world cordinates
 
 	vec3 n = glm::normalize(r->wi.origin + r->wi.direction);
 	r->wi.direction = n;
@@ -59,7 +77,7 @@ __device__ void cast(HitRecord *r, Camera *camera, unsigned long id, unsigned in
 	r->wi.length = FLT_MAX;
 }
 
-// Generates rays in camera space
+// Generates rays
 __global__ void crs::KERNEL_CAST_CAMERA_RAYS(HitRecord *hitrecords, Camera *camera, unsigned int seed){
 	unsigned long blockId = blockIdx.x + blockIdx.y * gridDim.x;
 	unsigned long threadId = blockId * (blockDim.x * blockDim.y) + (threadIdx.y * blockDim.x) + threadIdx.x;
