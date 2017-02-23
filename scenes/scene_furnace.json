@@ -11,9 +11,10 @@
         "name": "camera",
         "resolution": 10,
         "fov": 45,
+        "aperture:" 0.0,
         "position": [0.0, 0.0, 1.0],
         "lookat": [0.0, 0.0, -1.0],
-        "up": [0.0, 1.0, 0.0]
+        "up": [0.0, 1.0, 0.0],
     },
     "bxdfs": [
 		{

@@ -1,16 +1,17 @@
 {
 	"rendersettings": {
 		"output": "../scenes/scene_lambert.ppm",
-        "width": 1024,
-        "height": 512,
+        "width": 512,
+        "height": 256,
         "samples": 256,
         "depth": 4,
-        "gamma": 2.0
+        "gamma": 1.4
 	},
     "camera": {
         "name": "camera",
         "resolution": 10,
         "fov": 45,
+        "aperture": 0.0,
         "position": [0.0, 0.0, 1.0],
         "lookat": [0.0, 0.0, -1.0],
         "up": [0.0, 1.0, 0.0]

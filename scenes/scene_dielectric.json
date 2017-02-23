@@ -1,16 +1,17 @@
 {
 	"rendersettings": {
 		"output": "../scenes/scene_dielectric.ppm",
-        "width": 1024,
-        "height": 512,
-        "samples": 1024,
+        "width": 1920,
+        "height": 1080,
+        "samples": 2000,
         "depth": 8,
-        "gamma": 2.0
+        "gamma": 1.0
 	},
     "camera": {
         "name": "camera",
         "resolution": 10,
         "fov": 45,
+        "aperture": 0.0025,
         "position": [0.0, 0.0, 1.0],
         "lookat": [0.0, 0.0, -1.0],
         "up": [0.0, 1.0, 0.0]
@@ -19,9 +20,9 @@
 		{
 		"name": "sky",
         "type": "SIMPLE_SKY",
-        "kd": [0.4, 0.5, 0.75],
+        "kd": [0.0, 0.0, 0.0],
         "rpt": 0.0,
-        "ior": 1.5707
+        "ior": 0.5
 		},
 		{
 		"name": "normal",
@@ -33,7 +34,7 @@
 		{
         "name": "white",
         "type": "LAMBERT",
-        "kd": [1.0, 1.0, 1.0],
+        "kd": [1.2, 1.2, 1.2],
         "rpt": 0.0,
         "ior": 1.0
 		},
@@ -41,48 +42,41 @@
         "name": "glass",
         "type": "DIELECTRIC",
         "kd": [1.0, 1.0, 1.0],
-        "rpt": 0.0,
-        "ior": 1.75
+        "rpt": 0.015,
+        "ior": 1.66
 		},
 		{
-        "name": "white_r50",
+        "name": "floor",
         "type": "CONDUCTOR",
-        "kd": [1.0, 1.0, 1.0],
-        "rpt": 0.50,
-        "ior": 1.0
-		},
-		{
-        "name": "white_r05",
-        "type": "CONDUCTOR",
-        "kd": [1.0, 1.0, 1.0],
-        "rpt": 0.05,
-        "ior": 1.0
-		},
-		{
-        "name": "black",
-        "type": "LAMBERT",
-        "kd": [0.000, 0.000, 0.000],
-        "rpt": 0.0,
+        "kd": [0.2, 0.2, 0.2],
+        "rpt": 0.15,
         "ior": 1.0
 		},
 		{
         "name": "red",
         "type": "LAMBERT",
-        "kd": [1.0, 0.0, 0.0],
+        "kd": [-0.50, -0.75, -0.75],
         "rpt": 0.0,
         "ior": 1.0
 		},
 		{
         "name": "green",
         "type": "LAMBERT",
-        "kd": [0.0, 1.0, 0.0],
+        "kd": [-0.5, 0.0, -0.5],
         "rpt": 0.0,
         "ior": 1.0
 		},
 		{
-        "name": "light",
+        "name": "light-1",
         "type": "EMISSION",
-        "kd": [1.0, 1.0, 1.0],
+        "kd": [1.5, 1.5, 1.5],
+        "rpt": 0.0,
+        "ior": 1.0
+		},
+		{
+        "name": "light-2",
+        "type": "EMISSION",
+        "kd": [2.0, 2.0, 2.0],
         "rpt": 0.0,
         "ior": 1.0
 		}
@@ -90,39 +84,57 @@
     "spheres": [
 		{
     	"name": "sphere_1",
-        "center": [-0.3, 0.0, -2.0],
+        "center": [-0.25, 0.0, -3.0],
         "radius": 0.25,
         "bxdf": "normal"
         },
         {
-    	"name": "sphere_2",
-        "center": [-0.25, -0.1, -1.0],
+    	"name": "sphere_1b",
+        "center": [-1.25, 0.0, -3.0],
+        "radius": 0.25,
+        "bxdf": "green"
+        },
+        {
+    	"name": "g1",
+        "center": [-0.35, -0.1, -1.0],
         "radius": 0.15,
         "bxdf": "glass"
         },
         {
-    	"name": "sphere_2",
-        "center": [0.25, -0.1, -1.0],
+    	"name": "g2",
+        "center": [0.0, -0.1, -0.5],
         "radius": 0.15,
+        "bxdf": "glass"
+        },
+         {
+    	"name": "g4",
+        "center": [-0.15, 0.25, -1.0],
+        "radius": 0.10,
         "bxdf": "glass"
         },
 		{
     	"name": "sphere_3",
-        "center": [0.3, 0.0, -2.0],
+        "center": [0.3, 0.10, -1.5],
         "radius": 0.25,
-        "bxdf": "green"
+        "bxdf": "red"
         },
 		{
     	"name": "sphere_4",
         "center": [0.0, -100.25, -1.0],
         "radius": 100.0,
-        "bxdf": "white"
+        "bxdf": "floor"
         },
         {
     	"name": "light",
-        "center": [0.0, 20.0, -1.0],
-        "radius": 10,
-        "bxdf": "light"
+        "center": [-2.0, 3.0, -1.0],
+        "radius": 2,
+        "bxdf": "light-2"
+        },
+        {
+    	"name": "light",
+        "center": [2.0, 3.0, 3.0],
+        "radius": 4,
+        "bxdf": "light-1"
         }
 	]
 }
