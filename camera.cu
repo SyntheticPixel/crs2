@@ -55,7 +55,7 @@ __device__ void cast(HitRecord *r, Camera *camera, unsigned long id, unsigned in
 	float v = (((xy.y - 0.5f) + y_index) - (camera->height * 0.5f)) / camera->resolution;
 	float z = camera->focusplane / camera->resolution;
 
-	vec2 disc = crs::RandUniformDisc(&rngState) * camera->aperture;
+	vec2 disc = (crs::RandUniformDisc(&rngState) * camera->aperture) / camera->resolution;
 
 	vec3 dof;
 	dof.x = camera->position.x + disc.x;

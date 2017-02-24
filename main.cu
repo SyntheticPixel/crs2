@@ -281,9 +281,10 @@ int main(int argc, const char * argv[]){
 
 		crs::KERNEL_CAST_CAMERA_RAYS <<<cc.gridSize, cc.blockSize>>>(cc.device_hitRecords, device_camera, clock());
 		cudaDeviceSynchronize();
-		
+
 		// for each bounce
 		for (int j = 0; j < cc.depth; j++){
+
 			crs::KERNEL_SPHEREINTERSECT <<<cc.gridSize, cc.blockSize>>>(device_spheres, spherecount, cc.device_hitRecords, cc.width, cc.height);
 			cudaDeviceSynchronize();
 
