@@ -1,11 +1,11 @@
 {
 	"rendersettings": {
 		"output": "../scenes/scene_lambert.ppm",
-        "width": 512,
-        "height": 256,
-        "samples": 256,
-        "depth": 4,
-        "gamma": 1.4
+        "width": 1024,
+        "height": 512,
+        "samples": 1024,
+        "depth": 8,
+        "gamma": 1.0
 	},
     "camera": {
         "name": "camera",

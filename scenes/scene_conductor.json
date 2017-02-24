@@ -3,26 +3,26 @@
 		"output": "../scenes/scene_conductor.ppm",
         "width": 1024,
         "height": 512,
-        "samples": 128,
-        "depth": 4,
-        "gamma": 2.0
+        "samples": 500,
+        "depth": 16,
+        "gamma": 1.0
 	},
     "camera": {
         "name": "camera",
         "resolution": 10,
         "fov": 45,
-        "aperture:" 0.0,
+        "aperture": 0.0,
         "position": [0.0, 0.0, 1.0],
         "lookat": [0.0, 0.0, -1.0],
-        "up": [0.0, 1.0, 0.0],
+        "up": [0.0, 1.0, 0.0]
     },
     "bxdfs": [
 		{
 		"name": "sky",
         "type": "SIMPLE_SKY",
-        "kd": [0.6, 0.8, 1.0],
+        "kd": [0.75, 0.75, 0.75],
         "rpt": 0.0,
-        "ior": 1.0
+        "ior": 1.19
 		},
 		{
 		"name": "normal",
@@ -55,21 +55,21 @@
 		{
         "name": "white_r05",
         "type": "CONDUCTOR",
-        "kd": [1.0, 1.0, 1.0],
+        "kd": [0.80, 0.95, 0.95],
         "rpt": 0.05,
         "ior": 1.0
 		},
 		{
-        "name": "black",
+        "name": "white",
         "type": "LAMBERT",
-        "kd": [-0.01, -0.01, -0.01],
+        "kd": [1.0, 1.0, 1.0],
         "rpt": 0.0,
         "ior": 1.0
 		},
 		{
         "name": "red",
         "type": "LAMBERT",
-        "kd": [1.0, 0.0, 0.0],
+        "kd": [0.75, 0.25, 0.25],
         "rpt": 0.0,
         "ior": 1.0
 		},
@@ -91,27 +91,27 @@
     "spheres": [
 		{
     	"name": "sphere_1",
-        "center": [-0.6, 0.0, -1.0],
+        "center": [-0.6, 0.001, -1.0],
         "radius": 0.25,
-        "bxdf": "red"
+        "bxdf": "white"
         },
         {
     	"name": "sphere_2",
-        "center": [0.0, 0.0, -1.0],
+        "center": [0.0, 0.01, -1.0],
         "radius": 0.25,
-        "bxdf": "normal"
+        "bxdf": "red"
         },
 		{
     	"name": "sphere_3",
-        "center": [0.6, 0.0, -1.0],
+        "center": [0.6, 0.001, -1.0],
         "radius": 0.25,
-        "bxdf": "white_r50"
+        "bxdf": "white_r05"
         },
 		{
     	"name": "sphere_4",
         "center": [0.0, -100.25, -1.0],
         "radius": 100.0,
-        "bxdf": "grey_d"
+        "bxdf": "white_r50"
         }
 	]
 }
