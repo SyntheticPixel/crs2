@@ -76,6 +76,7 @@ namespace crs {
 	__device__ void bxdf_NOHIT(HitRecord *r);
 	__device__ void bxdf_NORMAL(HitRecord *r);
 	__device__ void bxdf_LAMBERT(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid);
+	__device__ void bxdf_OREN_NAYAR(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid);
 	__device__ void bxdf_CONDUCTOR(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid);
 	__device__ void bxdf_DIELECTRIC(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid);
 	__device__ void bxdf_EMISSION(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid);

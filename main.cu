@@ -172,6 +172,7 @@ int main(int argc, const char * argv[]){
 			if (strcmp(temp, "NOHIT") == 0) b.type = crs::NOHIT;
 			if (strcmp(temp, "NORMAL") == 0) b.type = crs::NORMAL;
 			if (strcmp(temp, "LAMBERT") == 0) b.type = crs::LAMBERT;
+			if (strcmp(temp, "OREN_NAYAR") == 0) b.type = crs::OREN_NAYAR;
 			if (strcmp(temp, "CONDUCTOR") == 0) b.type = crs::CONDUCTOR;
 			if (strcmp(temp, "DIELECTRIC") == 0) b.type = crs::DIELECTRIC;
 			if (strcmp(temp, "EMISSION") == 0) b.type = crs::EMISSION;

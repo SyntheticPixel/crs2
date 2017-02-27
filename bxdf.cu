@@ -1,3 +1,5 @@
+#include <math.h>
+
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include <curand.h>
@@ -44,26 +46,72 @@ __device__ void crs::bxdf_NORMAL(HitRecord *r) {
 // S for scatter : Lambertian bxdf
 __device__ void crs::bxdf_LAMBERT(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid) {
 	
-	// calculate the color
-	// TODO : simplified Oren-Nayar from http://ruh.li/GraphicsOrenNayar.html
-	//float NdL = glm::dot(r->normal, r->wi.direction);
-	vec3 C = ((vec3(1.0f) - b->kd)) * (-1.0f / (float)M_PI );	// NdL * (float)M_PI * (1.0f / (float)M_PI);
-
-	// add the result
-	r->accumulator.color += C;
-
 	// rng state
 	curandState rngState;
 	curand_init(crs::WangHash(seed)+tid, 0, 0, &rngState);
 
 	// generate a point within a unit sphere and transform according to location and normal
 	vec3 t = crs::RandUniformInSphere(&rngState);
-	//vec3 t = crs::RandCosineHemisphere(&rngState, r->normal);
 	vec3 target = t + r->normal + r->location;
 
 	// construct the new ray for the next bounce
 	r->wi.origin = r->location;
 	r->wi.direction = glm::normalize(target - r->location);
+	r->wi.length = FLT_MAX;
+
+	// calculate the color
+	vec3 C = ((vec3(1.0f) - b->kd)) * (-1.0f / (float)M_PI);
+
+	// add the result
+	r->accumulator.color += C;
+}
+
+// ON for Oren-Nayar : Oren-Nayar bxdf
+__device__ void crs::bxdf_OREN_NAYAR(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid) {
+
+	// simplified Oren-Nayar from http://ruh.li/GraphicsOrenNayar.html
+	vec3 incoming = r->wi.direction;
+	vec3 surface_normal = r->normal;
+
+	// rng state
+	curandState rngState;
+	curand_init(crs::WangHash(seed) + tid, 0, 0, &rngState);
+
+	// generate a point within a unit sphere and transform according to location and normal
+	vec3 t = crs::RandUniformInSphere(&rngState);
+	vec3 target = t + surface_normal + r->location;
+	vec3 outgoing = glm::normalize(target - r->location);
+
+	// calculate intermediary values
+	float NdL = dot(surface_normal, outgoing);
+	float NdV = glm::dot(surface_normal, incoming);
+
+	float angleVN = acos(NdV);
+	float angleLN = acos(NdL);
+
+	float alpha = max(angleVN, angleLN);
+	float beta = min(angleVN, angleLN);
+	float gamma = dot(incoming - surface_normal * dot(incoming, surface_normal), outgoing - surface_normal * dot(outgoing, surface_normal));
+
+	float sigmaSquared = 1.0f;
+
+	// calculate A and B
+	float A = 1.0 - 0.5 * (sigmaSquared / (sigmaSquared + 0.33));
+	float B = 0.45 * (sigmaSquared / (sigmaSquared + 0.09));
+	float C = sin(alpha) * tan(beta);
+
+	// put it all together
+	float L1 = max(0.0f, NdL) * (A + B * max(0.0f, gamma) * C);
+
+	// get the final color 
+	vec3 Color = b->kd * L1 * (1.0f / (float)M_PI);
+
+	// add the result
+	r->accumulator.color += Color;
+
+	// construct the new ray for the next bounce
+	r->wi.origin = r->location;
+	r->wi.direction = outgoing;
 	r->wi.length = FLT_MAX;
 }
 
@@ -218,6 +266,9 @@ __device__ void crs::evaluateBxdf(Bxdf *bxdfList, HitRecord *r, PixelBuffer *p, 
 		break;
 	case crs::LAMBERT:
 		bxdf_LAMBERT(&bxdfList[bid], r, seed, tid);
+		break;
+	case crs::OREN_NAYAR:
+		bxdf_OREN_NAYAR(&bxdfList[bid], r, seed, tid);
 		break;
 	case crs::CONDUCTOR:
 		bxdf_CONDUCTOR(&bxdfList[bid], r, seed, tid);

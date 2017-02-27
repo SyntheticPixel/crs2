@@ -5,7 +5,7 @@
 
 #define GLM_FORCE_CUDA
 #include <glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include <gtc/matrix_transform.hpp>
 
 #include "camera.h"
 #include "rand.h"
