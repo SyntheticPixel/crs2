@@ -46,8 +46,8 @@ __device__ void crs::bxdf_LAMBERT(Bxdf *b, HitRecord *r, unsigned int seed, unsi
 	
 	// calculate the color
 	// TODO : simplified Oren-Nayar from http://ruh.li/GraphicsOrenNayar.html
-	float NdL = glm::dot(r->normal, r->wi.direction);
-	vec3 C = (glm::vec3(1.0f) - b->kd) * NdL;// * (float)M_PI * (1.0f / (float)M_PI);
+	//float NdL = glm::dot(r->normal, r->wi.direction);
+	vec3 C = ((vec3(1.0f) - b->kd)) * (-1.0f / (float)M_PI );	// NdL * (float)M_PI * (1.0f / (float)M_PI);
 
 	// add the result
 	r->accumulator.color += C;
