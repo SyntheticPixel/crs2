@@ -9,7 +9,10 @@ Code is largely based on the fantastic tutorials and "Raytracing in one weekend"
 Another source of inspiration are the amazing explanations on scratchapixel:
 https://www.scratchapixel.com/
 
-*Dependencies*
+**Dependencies**
 - Nvidia Cuda (version 8 was used in development): https://developer.nvidia.com/cuda-toolkit
 - The GLM mathematics library: http://glm.g-truc.net/0.9.8/index.html
 - Rapidjson for scene parsing: http://rapidjson.org/
+
+<hr>
+![alt tag](https://github.com/SyntheticPixel/crs2/blob/master/images/20170228-002.jpg)
