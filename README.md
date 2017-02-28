@@ -24,4 +24,4 @@ https://www.scratchapixel.com/
 
 This image (1024x512 pixels, 2000 samples with 8 bounces) was rendered :
 - on a GeForce GTX675MX (OSX 10.12.3, 64 bit): 44.57 seconds
-- on a GeForce GTX970M (Win10, 64 bit): 23.3 seconds
+- on a GeForce GTX970M (Win10, 64 bit): 28,27 seconds
