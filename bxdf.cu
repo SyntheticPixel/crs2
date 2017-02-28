@@ -26,7 +26,7 @@ __host__ int crs::BxdfTable::getBxdfIdbyName(std::string bxdfname) {
 
 __device__ void crs::bxdf_NOHIT(HitRecord *r) {
 	// calculate color
-	r->accumulator.color += glm::vec3(0.0f, 0.0f, 0.0f);
+	r->accumulator.color *= glm::vec3(1.0f, 1.0f, 1.0f);
 
 	// terminate the path
 	r->terminated = true;
@@ -37,7 +37,7 @@ __device__ void crs::bxdf_NORMAL(HitRecord *r) {
 	vec3 C = 0.5f * (r->normal + vec3(1.0f, 1.0f, 1.0f));
 	
 	// accumulate the bounce
-	r->accumulator.color += C;
+	r->accumulator.color *= C;
 
 	// terminate the path
 	r->terminated = true;
@@ -59,11 +59,8 @@ __device__ void crs::bxdf_LAMBERT(Bxdf *b, HitRecord *r, unsigned int seed, unsi
 	r->wi.direction = glm::normalize(target - r->location);
 	r->wi.length = FLT_MAX;
 
-	// calculate the color
-	vec3 C = ((vec3(1.0f) - b->kd)) * (-1.0f / (float)M_PI);
-
-	// add the result
-	r->accumulator.color += C;
+	// modulate the result
+	r->accumulator.color *= b->alb;
 }
 
 // ON for Oren-Nayar : Oren-Nayar bxdf
@@ -93,21 +90,18 @@ __device__ void crs::bxdf_OREN_NAYAR(Bxdf *b, HitRecord *r, unsigned int seed, u
 	float beta = min(angleVN, angleLN);
 	float gamma = dot(incoming - surface_normal * dot(incoming, surface_normal), outgoing - surface_normal * dot(outgoing, surface_normal));
 
-	float sigmaSquared = 1.0f;
+	float sigmaSquared = b->rpt * b->rpt;
 
 	// calculate A and B
-	float A = 1.0 - 0.5 * (sigmaSquared / (sigmaSquared + 0.33));
+	float A = 1.0 - 0.5 * (sigmaSquared / (sigmaSquared + 0.57));
 	float B = 0.45 * (sigmaSquared / (sigmaSquared + 0.09));
 	float C = sin(alpha) * tan(beta);
 
 	// put it all together
 	float L1 = max(0.0f, NdL) * (A + B * max(0.0f, gamma) * C);
 
-	// get the final color 
-	vec3 Color = b->kd * L1 * (1.0f / (float)M_PI);
-
-	// add the result
-	r->accumulator.color += Color;
+	// modulate the result
+	r->accumulator.color *= b->alb * L1;
 
 	// construct the new ray for the next bounce
 	r->wi.origin = r->location;
@@ -117,13 +111,6 @@ __device__ void crs::bxdf_OREN_NAYAR(Bxdf *b, HitRecord *r, unsigned int seed, u
 
 // R for Reflect : conductor/metal bxdf
 __device__ void crs::bxdf_CONDUCTOR(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid) {
-
-	// calculate the color
-	float NdL = glm::dot(r->normal, r->wi.direction);
-	vec3 C = (glm::vec3(1.0f) - b->kd) * NdL;
-
-	// add the result
-	r->accumulator.color += C;
 
 	// rng state
 	curandState rngState;
@@ -143,6 +130,9 @@ __device__ void crs::bxdf_CONDUCTOR(Bxdf *b, HitRecord *r, unsigned int seed, un
 	r->wi.origin = r->location;
 	r->wi.direction = glm::normalize(f);
 	r->wi.length = FLT_MAX;
+
+	// modulate the result
+	r->accumulator.color *= b->alb;
 }
 
 // T for Transmit : dielectric/glass bxdf
@@ -207,17 +197,14 @@ __device__ void crs::bxdf_DIELECTRIC(Bxdf *b, HitRecord *r, unsigned int seed, u
 	r->wi.direction = glm::normalize(f);
 	r->wi.length = FLT_MAX;
 
-	// calculate the color
-	float NdL = glm::dot(r->normal, r->wi.direction);
-	vec3 C = (glm::vec3(1.0f) - b->kd) * NdL;
-
-	r->accumulator.color += C;
+	// modulate the result
+	r->accumulator.color *= b->alb;
 }
 
 // E for Emission : energy emitting bxdf
 __device__ void crs::bxdf_EMISSION(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid) {
 	// accumulate the bounce
-	r->accumulator.color += b->kd;
+	r->accumulator.color *= b->alb;
 
 	// terminate the path
 	r->terminated = true;
@@ -231,7 +218,7 @@ __device__ void crs::bxdf_SUBSURFACE(Bxdf *b, HitRecord *r, unsigned int seed, u
 __device__ void crs::bxdf_CONSTANT(Bxdf *b, HitRecord *r) {
 
 	// accumulate the bounce
-	r->accumulator.color += b->kd;
+	r->accumulator.color *= b->alb;
 
 	// terminate the path
 	r->terminated = true;
@@ -240,10 +227,10 @@ __device__ void crs::bxdf_CONSTANT(Bxdf *b, HitRecord *r) {
 __device__ void crs::bxdf_SIMPLE_SKY(Bxdf *b, HitRecord *r){
 	// calculate color
 	float t = 0.5 * (r->wi.direction.y + 1.0f);
-	vec3 C = ((1.0f - t) * glm::vec3(b->ior)) + (t * b->kd);
+	vec3 C = ((1.0f - t) * glm::vec3(b->ior)) + (t * b->alb);
 
 	// accumulate the bounce
-	r->accumulator.color += C;
+	r->accumulator.color *= C;
 
 	// terminate the path
 	r->terminated = true;

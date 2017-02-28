@@ -180,15 +180,15 @@ int main(int argc, const char * argv[]){
 			if (strcmp(temp, "CONSTANT") == 0) b.type = crs::CONSTANT;
 			if (strcmp(temp, "SIMPLE_SKY") == 0) b.type = crs::SIMPLE_SKY;
 
-			const Value& kd = (*itr)["kd"];
-			b.kd.x = kd[0].GetFloat();
-			b.kd.y = kd[1].GetFloat();
-			b.kd.z = kd[2].GetFloat();
+			const Value& kd = (*itr)["albedo"];
+			b.alb.x = kd[0].GetFloat();
+			b.alb.y = kd[1].GetFloat();
+			b.alb.z = kd[2].GetFloat();
 
-			const Value& rpt = (*itr)["rpt"];
+			const Value& rpt = (*itr)["roughness"];
 			b.rpt = rpt.GetFloat();
 
-			const Value& ior = (*itr)["ior"];
+			const Value& ior = (*itr)["refraction"];
 			b.ior = ior.GetFloat();
 
 			host_bxdfs[i] = b;

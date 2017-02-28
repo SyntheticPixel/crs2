@@ -28,14 +28,14 @@ namespace crs {
 
 	struct Bxdf {
 		BXDFTYPE		type;			// bxdf type
-		vec3			kd;				// diffuse reflection/absorption
+		vec3			alb;			// albedo : reflection/absorption
 		float			rpt;			// ray perturbation : 0.0 = mirror, 1.0 = lambert
 		float			ior;			// index of reflection/refraction
 
 
 		__host__ __device__ Bxdf() {
 			type = NOHIT;
-			kd = vec3(0.0f, 0.0f, 0.0f);
+			alb = vec3(0.0f, 0.0f, 0.0f);
 			rpt = 0.0f;
 			ior = 1.0f;
 		}

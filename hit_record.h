@@ -35,7 +35,8 @@ namespace crs{
 			location = vec3(0.0f, 0.0f, 0.0f);
 			normal = vec3(0.0f, 0.0f, 0.0f);
 			bxdf = crs::NOHIT;
-			accumulator = PixelBuffer();
+			accumulator.color = vec3(1.0f, 1.0f, 1.0f);
+			accumulator.samples = 0;
 			terminated = false;
 		};
 
@@ -44,7 +45,7 @@ namespace crs{
 			location = vec3(0.0f, 0.0f, 0.0f);
 			normal = vec3(0.0f, 0.0f, 0.0f);
 			bxdf = crs::NOHIT;
-			accumulator.color = vec3(0.0f, 0.0f, 0.0f);
+			accumulator.color = vec3(1.0f, 1.0f, 1.0f);
 			accumulator.samples = 0;
 			terminated = false;
 		};
