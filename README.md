@@ -17,6 +17,6 @@ https://www.scratchapixel.com/
 <hr>
 ![alt tag](https://github.com/SyntheticPixel/crs2/blob/master/images/20170228-002.jpg)
 
-This image (1024x512 pixels, 2000 samples with 8 bounces) was rendered in :
+This image (1024x512 pixels, 2000 samples with 8 bounces) was rendered :
 - on a GeForce GTX675MX (OSX 10.12.3, 64 bit): 44.57 seconds
 - on a GeForce GTX970M (Win10, 64 bit): 23.3 seconds
