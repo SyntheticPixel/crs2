@@ -1,5 +1,5 @@
 # crs2
-My personal attempt to construct a performance pathtracer using C/C++ and Nvidia's CUDA platform. 
+My personal attempt at constructing a performance pathtracer using C/C++ and Nvidia's CUDA platform. 
 Should be fairly cross-platform, tested on mac OSX (10.12.3) and Win 10 64-bit.
 
 Code is largely based on the fantastic tutorials and "Raytracing in one weekend" mini-books by Peter Shirley:
