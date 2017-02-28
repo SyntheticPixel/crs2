@@ -19,52 +19,52 @@
     "bxdfs": [
 		{
 		"name": "sky",
-        "type": "NOHIT",
-        "kd": [1.0, 1.0, 1.0],
-        "rpt": 0.0,
-        "ior": 1.0
+        "type": "SIMPLE_SKY",
+        "albedo": [0.0, 0.0, 0.0],
+        "roughness": 0.0,
+        "refraction": 0.5
 		},
 		{
 		"name": "normal",
         "type": "NORMAL",
-        "kd": [1.0, 1.0, 1.0],
-		"rpt": 0.0,
-		"ior": 1.0
+        "albedo": [1.0, 1.0, 1.0],
+		"roughness": 0.0,
+		"refraction": 1.0
 		},
 		{
         "name": "emission_white",
         "type": "EMISSION",
-        "kd": [2.0, 2.0, 2.0],
-		"rpt": 0.0,
-		"ior": 1.0
+        "albedo": [2.0, 2.0, 2.0],
+		"roughness": 0.0,
+		"refraction": 1.0
 		},
 		{
         "name": "white",
         "type": "CONDUCTOR",
-        "kd": [1.0, 1.0, 1.0],
-		"rpt": 0.25,
-		"ior": 1.0
+        "albedo": [1.0, 1.0, 1.0],
+		"roughness": 0.25,
+		"refraction": 1.0
 		},
 		{
         "name": "emission_red",
         "type": "EMISSION",
-        "kd": [2.0, 1.0, 1.0],
-		"rpt": 0.0,
-		"ior": 1.0
+        "albedo": [2.0, 1.0, 1.0],
+		"roughness": 0.0,
+		"refraction": 1.0
 		},
 		{
         "name": "emission_green",
         "type": "EMISSION",
-        "kd": [1.0, 2.0, 1.0],
-		"rpt": 0.0,
-		"ior": 1.0
+        "albedo": [1.0, 2.0, 1.0],
+		"roughness": 0.0,
+		"refraction": 1.0
 		},
 		{
         "name": "emission_blue",
         "type": "EMISSION",
-        "kd": [1.0, 1.0, 2.0],
-		"rpt": 0.0,
-		"ior": 1.0
+        "albedo": [1.0, 1.0, 2.0],
+		"roughness": 0.0,
+		"refraction": 1.0
 		}
 	],
     "spheres": [

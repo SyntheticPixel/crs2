@@ -3,9 +3,9 @@
 		"output": "../scenes/scene_conductor.ppm",
         "width": 1024,
         "height": 512,
-        "samples": 500,
-        "depth": 16,
-        "gamma": 1.0
+        "samples": 2000,
+        "depth": 4,
+        "gamma": 1.4
 	},
     "camera": {
         "name": "camera",
@@ -20,78 +20,78 @@
 		{
 		"name": "sky",
         "type": "SIMPLE_SKY",
-        "kd": [0.75, 0.75, 0.75],
-        "rpt": 0.0,
-        "ior": 1.19
+        "albedo": [0.85, 0.85, 0.85],
+        "roughness": 0.0,
+        "refraction": 1.19
 		},
 		{
 		"name": "normal",
         "type": "NORMAL",
-        "kd": [1.0, 1.0, 1.0],
-        "rpt": 0.0,
-        "ior": 1.0
+        "albedo": [1.0, 1.0, 1.0],
+        "roughness": 0.0,
+        "refraction": 1.19
 		},
 		{
         "name": "grey_d",
         "type": "LAMBERT",
-        "kd": [0.5, 0.5, 0.5],
-        "rpt": 0.0,
-        "ior": 1.0
+        "albedo": [0.5, 0.5, 0.5],
+        "roughness": 0.0,
+        "refraction": 1.0
 		},
 		{
         "name": "white_r99",
         "type": "CONDUCTOR",
-        "kd": [1.0, 1.0, 1.0],
-        "rpt": 0.99,
-        "ior": 1.0
+        "albedo": [1.0, 1.0, 1.0],
+        "roughness": 0.99,
+        "refraction": 1.0
 		},
 		{
         "name": "white_r50",
         "type": "CONDUCTOR",
-        "kd": [1.0, 1.0, 1.0],
-        "rpt": 0.50,
-        "ior": 1.0
+        "albedo": [1.0, 1.0, 1.0],
+        "roughness": 0.50,
+        "refraction": 1.0
 		},
 		{
         "name": "white_r05",
         "type": "CONDUCTOR",
-        "kd": [0.80, 0.95, 0.95],
-        "rpt": 0.05,
-        "ior": 1.0
+        "albedo": [0.95, 0.95, 0.95],
+        "roughness": 0.05,
+        "refraction": 1.0
 		},
 		{
         "name": "white",
         "type": "LAMBERT",
-        "kd": [1.0, 1.0, 1.0],
-        "rpt": 0.0,
-        "ior": 1.0
+        "albedo": [1.0, 1.0, 1.0],
+        "roughness": 0.0,
+        "refraction": 1.0
 		},
 		{
         "name": "red",
         "type": "LAMBERT",
-        "kd": [0.75, 0.25, 0.25],
-        "rpt": 0.0,
-        "ior": 1.0
+        "albedo": [0.75, 0.25, 0.25],
+        "roughness": 0.0,
+        "refraction": 1.0
 		},
 		{
         "name": "green",
         "type": "LAMBERT",
-        "kd": [0.0, 1.0, 0.0],
-        "rpt": 0.0,
-        "ior": 1.0
+        "albedo": [0.0, 1.0, 0.0],
+        "roughness": 0.0,
+        "refraction": 1.0
 		},
 		{
         "name": "blue",
         "type": "LAMBERT",
-        "kd": [0.0, 0.0, 1.0],
-        "rpt": 0.0,
-        "ior": 1.0
+        "albedo": [0.0, 0.0, 1.0],
+        "roughness": 0.0,
+        "refraction": 1.0
 		}
 	],
     "spheres": [
 		{
     	"name": "sphere_1",
-        "center": [-0.6, 0.001, -1.0],
+        "center": [-0.6, 0.01, -1.0],
         "radius": 0.25,
         "bxdf": "white"
         },
@@ -99,19 +99,19 @@
     	"name": "sphere_2",
         "center": [0.0, 0.01, -1.0],
         "radius": 0.25,
-        "bxdf": "red"
+        "bxdf": "grey_d"
         },
 		{
     	"name": "sphere_3",
-        "center": [0.6, 0.001, -1.0],
+        "center": [0.6, 0.01, -1.0],
         "radius": 0.25,
-        "bxdf": "white_r05"
+        "bxdf": "white_r50"
         },
 		{
     	"name": "sphere_4",
         "center": [0.0, -100.25, -1.0],
         "radius": 100.0,
-        "bxdf": "white_r50"
+        "bxdf": "white_r05"
         }
 	]
 }

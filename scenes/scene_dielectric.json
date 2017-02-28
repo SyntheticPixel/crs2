@@ -1,11 +1,11 @@
 {
 	"rendersettings": {
 		"output": "../scenes/scene_dielectric.ppm",
-        "width": 1920,
-        "height": 1080,
+        "width": 1024,
+        "height": 512,
         "samples": 2000,
         "depth": 8,
-        "gamma": 1.0
+        "gamma": 1.4
 	},
     "camera": {
         "name": "camera",
@@ -20,65 +20,72 @@
 		{
 		"name": "sky",
         "type": "SIMPLE_SKY",
-        "kd": [0.0, 0.0, 0.0],
-        "rpt": 0.0,
-        "ior": 0.5
+        "albedo": [0.45, 0.65, 0.95],
+        "roughness": 0.0,
+        "refraction": 1.19
 		},
 		{
 		"name": "normal",
         "type": "NORMAL",
-        "kd": [1.0, 1.0, 1.0],
-        "rpt": 0.0,
-        "ior": 1.0
+        "albedo": [1.0, 1.0, 1.0],
+        "roughness": 0.0,
+        "refraction": 1.0
 		},
 		{
         "name": "white",
         "type": "LAMBERT",
-        "kd": [1.2, 1.2, 1.2],
-        "rpt": 0.0,
-        "ior": 1.0
+        "albedo": [0.9, 0.9, 0.9],
+        "roughness": 0.0,
+        "refraction": 1.0
+		},
+		{
+        "name": "metal",
+        "type": "CONDUCTOR",
+        "albedo": [0.95, 0.95, 0.95],
+        "roughness": 0.05,
+        "refraction": 1.0
 		},
 		{
         "name": "glass",
         "type": "DIELECTRIC",
-        "kd": [1.0, 1.0, 1.0],
-        "rpt": 0.015,
-        "ior": 1.66
+        "albedo": [1.0, 1.0, 1.0],
+        "roughness": 0.1,
+        "refraction": 1.334
 		},
 		{
         "name": "floor",
-        "type": "CONDUCTOR",
-        "kd": [0.2, 0.2, 0.2],
-        "rpt": 0.15,
-        "ior": 1.0
+        "type": "OREN_NAYAR",
+        "albedo": [0.95, 0.95, 0.95],
+        "roughness": 0.0,
+        "refraction": 1.0
 		},
 		{
         "name": "red",
         "type": "LAMBERT",
-        "kd": [-0.50, -0.75, -0.75],
-        "rpt": 0.0,
-        "ior": 1.0
+        "albedo": [0.95, 0.35, 0.05],
+        "roughness": 1.0,
+        "refraction": 1.0
 		},
 		{
         "name": "green",
         "type": "LAMBERT",
-        "kd": [-0.5, 0.0, -0.5],
-        "rpt": 0.0,
-        "ior": 1.0
+        "albedo": [0.2, 0.7, 0.2],
+        "roughness": 1.0,
+        "refraction": 1.0
 		},
 		{
         "name": "light-1",
         "type": "EMISSION",
-        "kd": [1.5, 1.5, 1.5],
-        "rpt": 0.0,
-        "ior": 1.0
+        "albedo": [2.5, 2.5, 2.5],
+        "roughness": 0.0,
+        "refraction": 1.0
 		},
 		{
         "name": "light-2",
         "type": "EMISSION",
-        "kd": [2.0, 2.0, 2.0],
-        "rpt": 0.0,
-        "ior": 1.0
+        "albedo": [2.0, 2.0, 2.0],
+        "roughness": 0.0,
+        "refraction": 1.0
 		}
 	],
     "spheres": [
@@ -102,7 +109,7 @@
         },
         {
     	"name": "g2",
-        "center": [0.0, -0.1, -0.5],
+        "center": [0.15, -0.1, -0.5],
         "radius": 0.15,
         "bxdf": "glass"
         },
@@ -114,7 +121,7 @@
         },
 		{
     	"name": "sphere_3",
-        "center": [0.3, 0.10, -1.5],
+        "center": [0.45, 0.10, -1.5],
         "radius": 0.25,
         "bxdf": "red"
         },
@@ -126,15 +133,9 @@
         },
         {
     	"name": "light",
-        "center": [-2.0, 3.0, -1.0],
+        "center": [-3.0, 4.0, -1.0],
         "radius": 2,
         "bxdf": "light-2"
-        },
-        {
-    	"name": "light",
-        "center": [2.0, 3.0, 3.0],
-        "radius": 4,
-        "bxdf": "light-1"
         }
 	]
 }

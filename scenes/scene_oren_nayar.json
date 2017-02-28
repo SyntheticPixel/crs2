@@ -1,6 +1,8 @@
 {
 	"rendersettings": {
-		"output": "../scenes/scene_lambert.ppm",
+		"mode": "production",
+		"preview-size": 0.25,
+		"output": "../scenes/scene_oren_nayar.ppm",
         "width": 1024,
         "height": 512,
         "samples": 1000,
@@ -26,21 +28,21 @@
 		},
 		{
 		"name": "white",
-        "type": "LAMBERT",
+        "type": "OREN_NAYAR",
         "albedo": [0.99, 0.99, 0.99],
 		"roughness": 0.0,
 		"refraction": 1.0
 		},
 		{
 		"name": "grey",
-        "type": "LAMBERT",
+        "type": "OREN_NAYAR",
         "albedo": [0.5, 0.5, 0.5],
 		"roughness": 0.0,
 		"refraction": 1.0
 		},
 		{
         "name": "black",
-        "type": "LAMBERT",
+        "type": "OREN_NAYAR",
         "albedo": [0.05, 0.05, 0.05],
 		"roughness": 0.0,
 		"refraction": 1.0
