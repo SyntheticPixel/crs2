@@ -28,8 +28,8 @@ namespace crs{
 
 	class Camera{
 	public:
-		int			width;			// sensor width in pixels
-		int 		height;			// sensor height in pixels
+		float		width;			// sensor width in pixels
+		float 		height;			// sensor height in pixels
 		float		resolution;		// sensor resolution in pixels/mm (300dpi = 300/25.4 points per mm)
 		float 		focusplane;		// distance to the image plane in camera space
 
@@ -44,6 +44,7 @@ namespace crs{
 		__host__ __device__ Camera();
 		__host__ __device__ ~Camera();
 
+		__host__ __device__ void update();			// update all values
 		__host__ __device__ void updateFOV();		// update the field of view
 		__host__ __device__ void updateMatrix();	// update transformation matrix
 	};

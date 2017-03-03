@@ -25,9 +25,6 @@ __host__ int crs::BxdfTable::getBxdfIdbyName(std::string bxdfname) {
 }
 
 __device__ void crs::bxdf_NOHIT(HitRecord *r) {
-	// calculate color
-	r->accumulator.color *= glm::vec3(1.0f, 1.0f, 1.0f);
-
 	// terminate the path
 	r->terminated = true;
 }
@@ -217,8 +214,8 @@ __device__ void crs::bxdf_SUBSURFACE(Bxdf *b, HitRecord *r, unsigned int seed, u
 // C for constant : return a constant color
 __device__ void crs::bxdf_CONSTANT(Bxdf *b, HitRecord *r) {
 
-	// accumulate the bounce
-	r->accumulator.color *= b->alb;
+	// replace with constant color
+	r->accumulator.color = b->alb;
 
 	// terminate the path
 	r->terminated = true;

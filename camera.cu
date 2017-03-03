@@ -27,13 +27,23 @@ __host__ __device__ crs::Camera::~Camera(){
 
 }
 
+__host__ __device__ void crs::Camera::update(){
+	// scale to world coordinates
+	//width /= resolution;
+	//height /= resolution;
+
+	// update FOV and matrix
+	updateFOV();
+	updateMatrix();
+}
+
 __host__ __device__ void crs::Camera::updateFOV(){
 	// given the vertical fov, calculate the distance to the focal plane
 	//float theta = fov * ((float)M_PI/180.0f);
 	//float half_height = height * 0.5f;
 
 	// TODO
-	focusplane = width;//*0.5f;
+	focusplane = (float)width*2.0f;
 }
 
 __host__ __device__ void crs::Camera::updateMatrix(){
@@ -48,30 +58,26 @@ __device__ void cast(HitRecord *r, Camera *camera, unsigned long id, unsigned in
 	glm::vec2 xy = crs::RandUniformSquare(&rngState);
 
 	// Calculate direction, starting with pixel indices
-	float x_index = fmod( (float)id, (float)camera->width );
+	float x_index = fmod( (float)id, camera->width );
 	float y_index = id / camera->width;
 
 	float u = (((xy.x - 0.5f) + x_index) - (camera->width * 0.5f)) / camera->resolution;
 	float v = (((xy.y - 0.5f) + y_index) - (camera->height * 0.5f)) / camera->resolution;
-	float z = camera->focusplane / camera->resolution;
+	float z = -camera->focusplane / camera->resolution;
 
-	vec2 disc = (crs::RandUniformDisc(&rngState) * camera->aperture) / camera->resolution;
+	vec2 dof = (crs::RandUniformDisc(&rngState) * camera->aperture) / camera->resolution;
 
-	vec3 dof;
-	dof.x = camera->position.x + disc.x;
-	dof.y = camera->position.y + disc.y;
-	dof.z = camera->position.z;
+	// construct the local ray
+	glm::vec4 l = vec4(u + dof.x, -(v + dof.y), z, 0.0f);
 
-	r->wi.origin = dof;
+	//transform to world cordinates and normalize
+	glm::vec4 n = glm::normalize(l);
+	glm::vec4 t = n * camera->matrix;
 
-	r->wi.direction.x = u;
-	r->wi.direction.y = -v;
-	r->wi.direction.z = -z;
-
-	//transform to world cordinates
-
-	vec3 n = glm::normalize(r->wi.origin + r->wi.direction);
-	r->wi.direction = n;
+	r->wi.origin = camera->position;
+	r->wi.direction.x  = t.x;
+	r->wi.direction.y  = t.y;
+	r->wi.direction.z  = t.z;
 
 	r->wi.frequency = 0.0f;
 	r->wi.length = FLT_MAX;

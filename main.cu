@@ -100,8 +100,8 @@ int main(int argc, const char * argv[]){
 		// read the camera settings
 		host_camera = new Camera;
 
-		host_camera->width = cc.width;
-		host_camera->height = cc.height;
+		host_camera->width = (float)cc.width;
+		host_camera->height = (float)cc.height;
 		
 		Value *setting;
 		setting = Pointer("/camera/resolution").Get(dom);
@@ -135,8 +135,7 @@ int main(int argc, const char * argv[]){
 		host_camera->aperture = setting->GetFloat();
 
 		// make the camera current
-		host_camera->updateFOV();
-		host_camera->updateMatrix();
+		host_camera->update();
 
 	}else{
 		cout << " Error parsing scene file, no camera found!" << std::endl;
