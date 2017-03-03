@@ -4,16 +4,16 @@
         "width": 1000,
         "height": 1000,
         "samples": 1000,
-        "depth": 8,
-        "gamma": 1.0
+        "depth": 16,
+        "gamma": 1.4
 	},
     "camera": {
         "name": "camera",
         "resolution": 10,
         "fov": 45,
         "aperture": 0.0,
-        "position": [1.41, 1.41, 1.41],
-        "lookat": [-1.0, -0.70, -1.0],
+        "position": [1.41, 0.10, 1.41],
+        "lookat": [-1.0, 0.20, -1.0],
         "up": [0.0, 1.0, 0.0]
     },
     "bxdfs": [
@@ -40,7 +40,7 @@
 		},
 		{
         "name": "metal",
-        "type": "CONDUCTOR",
+        "type": "NORMAL",
         "albedo": [0.95, 0.75, 0.45],
         "roughness": 0.50,
         "refraction": 1.105
@@ -54,10 +54,10 @@
 		},
 		{
         "name": "floor",
-        "type": "OREN_NAYAR",
-        "albedo": [1.0, 1.0, 1.0],
-        "roughness": 0.0,
-        "refraction": 1.0
+        "type": "CONDUCTOR",
+        "albedo": [0.333, 0.333, 0.333],
+        "roughness": 0.15,
+        "refraction": 0.0
 		},
 		{
         "name": "red",
@@ -91,8 +91,8 @@
     "spheres": [
 		{
     	"name": "floor",
-        "center": [0.0, -1000.1, 0.0],
-        "radius": 1000.0,
+        "center": [0.0, -1000.21, 0.0],
+        "radius": 1000.10,
         "bxdf": "floor"
         },
         {
