@@ -1,28 +1,28 @@
 {
 	"rendersettings": {
 		"output": "../scenes/scene_dielectric.ppm",
-        "width": 1024,
-        "height": 512,
-        "samples": 2000,
+        "width": 1000,
+        "height": 1000,
+        "samples": 1000,
         "depth": 8,
-        "gamma": 1.4
+        "gamma": 1.0
 	},
     "camera": {
         "name": "camera",
         "resolution": 10,
         "fov": 45,
-        "aperture": 0.0025,
-        "position": [0.0, 0.0, 1.0],
-        "lookat": [0.0, 0.0, -1.0],
+        "aperture": 0.0,
+        "position": [1.41, 1.41, 1.41],
+        "lookat": [-1.0, -0.70, -1.0],
         "up": [0.0, 1.0, 0.0]
     },
     "bxdfs": [
 		{
 		"name": "sky",
         "type": "SIMPLE_SKY",
-        "albedo": [0.45, 0.65, 0.95],
+        "albedo": [0.70, 0.80, 0.90],
         "roughness": 0.0,
-        "refraction": 1.19
+        "refraction": 1.10
 		},
 		{
 		"name": "normal",
@@ -32,110 +32,122 @@
         "refraction": 1.0
 		},
 		{
-        "name": "white",
-        "type": "LAMBERT",
-        "albedo": [0.9, 0.9, 0.9],
+        "name": "black",
+        "type": "OREN_NAYAR",
+        "albedo": [0.1, 0.1, 0.1],
         "roughness": 0.0,
         "refraction": 1.0
 		},
 		{
         "name": "metal",
         "type": "CONDUCTOR",
-        "albedo": [0.95, 0.95, 0.95],
-        "roughness": 0.05,
-        "refraction": 1.0
+        "albedo": [0.95, 0.75, 0.45],
+        "roughness": 0.50,
+        "refraction": 1.105
 		},
 		{
         "name": "glass",
         "type": "DIELECTRIC",
-        "albedo": [1.0, 1.0, 1.0],
-        "roughness": 0.1,
-        "refraction": 1.334
+        "albedo": [0.8, 0.9, 1.0],
+        "roughness": 0.10,
+        "refraction": 1.105
 		},
 		{
         "name": "floor",
         "type": "OREN_NAYAR",
-        "albedo": [0.95, 0.95, 0.95],
+        "albedo": [1.0, 1.0, 1.0],
         "roughness": 0.0,
         "refraction": 1.0
 		},
 		{
         "name": "red",
-        "type": "LAMBERT",
-        "albedo": [0.95, 0.35, 0.05],
-        "roughness": 1.0,
-        "refraction": 1.0
+        "type": "DIELECTRIC",
+        "albedo": [0.95, 0.25, 0.25],
+        "roughness": 0.05,
+        "refraction": 1.105
+		},
+		{
+        "name": "blue",
+        "type": "DIELECTRIC",
+        "albedo": [0.45, 0.45, 0.95],
+        "roughness": 0.05,
+        "refraction": 1.105
 		},
 		{
         "name": "green",
-        "type": "LAMBERT",
-        "albedo": [0.2, 0.7, 0.2],
-        "roughness": 1.0,
-        "refraction": 1.0
+        "type": "DIELECTRIC",
+        "albedo": [0.25, 0.95, 0.25],
+        "roughness": 0.05,
+        "refraction": 1.105
 		},
 		{
-        "name": "light-1",
+        "name": "light",
         "type": "EMISSION",
         "albedo": [2.5, 2.5, 2.5],
-        "roughness": 0.0,
-        "refraction": 1.0
-		},
-		{
-        "name": "light-2",
-        "type": "EMISSION",
-        "albedo": [2.0, 2.0, 2.0],
         "roughness": 0.0,
         "refraction": 1.0
 		}
 	],
     "spheres": [
 		{
-    	"name": "sphere_1",
-        "center": [-0.25, 0.0, -3.0],
-        "radius": 0.25,
-        "bxdf": "normal"
-        },
-        {
-    	"name": "sphere_1b",
-        "center": [-1.25, 0.0, -3.0],
-        "radius": 0.25,
-        "bxdf": "green"
-        },
-        {
-    	"name": "g1",
-        "center": [-0.35, -0.1, -1.0],
-        "radius": 0.15,
-        "bxdf": "glass"
-        },
-        {
-    	"name": "g2",
-        "center": [0.15, -0.1, -0.5],
-        "radius": 0.15,
-        "bxdf": "glass"
-        },
-         {
-    	"name": "g4",
-        "center": [-0.15, 0.25, -1.0],
-        "radius": 0.10,
-        "bxdf": "glass"
-        },
-		{
-    	"name": "sphere_3",
-        "center": [0.45, 0.10, -1.5],
-        "radius": 0.25,
-        "bxdf": "red"
-        },
-		{
-    	"name": "sphere_4",
-        "center": [0.0, -100.25, -1.0],
-        "radius": 100.0,
+    	"name": "floor",
+        "center": [0.0, -1000.1, 0.0],
+        "radius": 1000.0,
         "bxdf": "floor"
         },
         {
-    	"name": "light",
-        "center": [-3.0, 4.0, -1.0],
-        "radius": 2,
-        "bxdf": "light-2"
+    	"name": "green-bottom",
+        "center": [0.0, 0.0, 0.0],
+        "radius": 0.099,
+        "bxdf": "green"
+        },
+        {
+    	"name": "glass-bottom",
+        "center": [-0.2, 0.0, 0.0],
+        "radius": 0.099,
+        "bxdf": "glass"
+        },
+        {
+    	"name": "red-bottom",
+        "center": [0.2, 0.0, 0.0],
+        "radius": 0.099,
+        "bxdf": "red"
+        },
+        {
+    	"name": "light-left",
+        "center": [-0.2, 0.2, 0.0],
+        "radius": 0.099,
+        "bxdf": "light"
+        },
+        {
+    	"name": "metal-middle",
+        "center": [0.0, 0.2, 0.0],
+        "radius": 0.099,
+        "bxdf": "metal"
+        },
+        {
+    	"name": "light-right",
+        "center": [0.2, 0.2, 0.0],
+        "radius": 0.099,
+        "bxdf": "light"
+        },
+        {
+    	"name": "glass-top",
+        "center": [0.0, 0.4, 0.0],
+        "radius": 0.099,
+        "bxdf": "glass"
+        },
+        {
+    	"name": "red-top",
+        "center": [-0.2, 0.4, 0.0],
+        "radius": 0.099,
+        "bxdf": "red"
+        },
+        {
+    	"name": "floor-top",
+        "center": [0.2, 0.4, 0.0],
+        "radius": 0.099,
+        "bxdf": "blue"
         }
 	]
 }
