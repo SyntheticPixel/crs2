@@ -14,12 +14,12 @@ using namespace std;
 using namespace crs;
 
 __host__ __device__ crs::Camera::Camera(){
-	width = 100;
-	height = 100;
-	resolution = 1.0f;
-	focusplane = 1.0f;
+	resolution_x = 100;
+	resolution_y = 100;
 
 	fov = 90.0f;			// default 90° vertical fov
+	focusplane = 100;
+	imageplane = 100;
 	aperture = 0.0f;
 }
 
@@ -28,25 +28,17 @@ __host__ __device__ crs::Camera::~Camera(){
 }
 
 __host__ __device__ void crs::Camera::update(){
-	// scale to world coordinates
-	//width /= resolution;
-	//height /= resolution;
 
-	// update FOV and matrix
-	updateFOV();
-	updateMatrix();
-}
+	// half the aperture
+	aperture *= 0.5f;
 
-__host__ __device__ void crs::Camera::updateFOV(){
-	// given the vertical fov, calculate the distance to the focal plane
-	//float theta = fov * ((float)M_PI/180.0f);
-	//float half_height = height * 0.5f;
+	// update FOV
+	if(fov <= 0.0f) fov = 0.1f;
+	if(fov >= 180.0f) fov = 179.9f;
 
-	// TODO
-	focusplane = (float)width*2.0f;
-}
+	imageplane = resolution_y * tan( glm::radians((180.0f - fov) * 0.5f) );
 
-__host__ __device__ void crs::Camera::updateMatrix(){
+	//update the camera matrix
 	matrix = glm::lookAt(position, lookat, up);
 }
 
@@ -54,21 +46,27 @@ __device__ void cast(HitRecord *r, Camera *camera, unsigned long id, unsigned in
 
 	// Generate a 2D random coordinate with a uniform distribution
 	curandState rngState;
+	glm::vec2 sample;
 	curand_init(crs::WangHash(seed) + id, 0, 0, &rngState);
-	glm::vec2 xy = crs::RandUniformSquare(&rngState);
+	sample = crs::RandUniformSquare(&rngState);
+	sample -= vec2(0.5f, 0.5f);
 
-	// Calculate direction, starting with pixel indices
-	float x_index = fmod( (float)id, camera->width );
-	float y_index = id / camera->width;
+	// Calculate pixel indices
+	float x_index = fmod( (float)id, camera->resolution_x );
+	float y_index = id / camera->resolution_x;
 
-	float u = (((xy.x - 0.5f) + x_index) - (camera->width * 0.5f)) / camera->resolution;
-	float v = (((xy.y - 0.5f) + y_index) - (camera->height * 0.5f)) / camera->resolution;
-	float z = -camera->focusplane / camera->resolution;
+	// Calculate the direction
+	float half_width = camera->resolution_x * 0.5f;
+	float half_height = camera->resolution_y * 0.5f;
+	float u = (sample.x + x_index) - half_width;
+	float v = (sample.y + y_index) - half_height;
+	float z = camera->imageplane;
 
-	vec2 dof = (crs::RandUniformDisc(&rngState) * camera->aperture) / camera->resolution;
+	// Circle of Confusion
+	vec2 coc = crs::RandUniformDisc(&rngState) * camera->aperture;
 
 	// construct the local ray
-	glm::vec4 l = vec4(u + dof.x, -(v + dof.y), z, 0.0f);
+	glm::vec4 l = vec4(coc, 0.0f, 0.0f) + vec4(u, -v, -z, 0.0f) ;
 
 	//transform to world cordinates and normalize
 	glm::vec4 n = glm::normalize(l);
@@ -88,7 +86,7 @@ __global__ void crs::KERNEL_CAST_CAMERA_RAYS(HitRecord *hitrecords, Camera *came
 	unsigned long blockId = blockIdx.x + blockIdx.y * gridDim.x;
 	unsigned long threadId = blockId * (blockDim.x * blockDim.y) + (threadIdx.y * blockDim.x) + threadIdx.x;
 
-	if (threadId >= camera->width * camera->height) return;
+	if (threadId >= camera->resolution_x * camera->resolution_y) return;
 
 	// Cast
 	cast(&hitrecords[threadId], camera, threadId, seed);

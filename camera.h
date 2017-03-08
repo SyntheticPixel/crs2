@@ -28,25 +28,23 @@ namespace crs{
 
 	class Camera{
 	public:
-		float		width;			// sensor width in pixels
-		float 		height;			// sensor height in pixels
-		float		resolution;		// sensor resolution in pixels/mm (300dpi = 300/25.4 points per mm)
-		float 		focusplane;		// distance to the image plane in camera space
+		float		resolution_x;		// sensor width in pixels
+		float 		resolution_y;		// sensor height in pixels
 
-		float		fov;			// vertical field of view
-		float		aperture;		// aperture size
+		float		fov;				// vertical field of view
+		float 		focusplane;			// distance to the focus plane in camera space
+		float 		imageplane;			// distance to the image plane in camera space
+		float		aperture;			// aperture size
 
-		vec3 		position;	// world position
-		vec3 		lookat;		// look at coordinate in world
-		vec3 		up;			// up vector (usually y-up : 0,1,0)
-		mat4 		matrix;		// camera matrix
+		vec3 		position;			// world position
+		vec3 		lookat;				// look at coordinate in world
+		vec3 		up;					// up vector (usually y-up : 0,1,0)
+		mat4 		matrix;				// camera matrix
 
 		__host__ __device__ Camera();
 		__host__ __device__ ~Camera();
 
-		__host__ __device__ void update();			// update all values
-		__host__ __device__ void updateFOV();		// update the field of view
-		__host__ __device__ void updateMatrix();	// update transformation matrix
+		__host__ __device__ void update();			// recalculate FOV and Matrix
 	};
 
 	__global__ void KERNEL_CAST_CAMERA_RAYS(HitRecord *hitrecords, Camera *camera, unsigned int seed);

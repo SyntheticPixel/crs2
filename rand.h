@@ -23,7 +23,11 @@ Copyright Erik Veldeman
 #include <math.h>
 
 #ifndef M_PI
-#define M_PI 3.1415927410125732421875
+#define M_PI 3.14159265358979323846264338327950288
+#endif
+
+#ifndef M_SQRT2
+#define M_SQRT2 1.41421356237309504880168872420969808
 #endif
 
 #include "crs.h"
@@ -62,7 +66,7 @@ namespace crs{
 	inline __device__ glm::vec2 RandUniformDisc(curandState *s){
 		glm::vec2 p;
 
-		float t = curand_uniform(s) * 2 * M_PI;
+		float t = curand_uniform(s) * 2 * (float)M_PI;
 		float r = 2 * curand_uniform(s);
 		if(r > 2){r -= 2.0f;}
 
@@ -78,7 +82,7 @@ namespace crs{
 	inline __device__ glm::vec3 RandCosineHemisphere(curandState *s, glm::vec3 normal){
 		glm::vec3 p;
 
-		float x = curand_uniform(s) * 2 * M_PI;
+		float x = curand_uniform(s) * 2 * (float)M_PI;
 		float y = curand_uniform(s);
 
 		vec3 t = abs(normal.x) > 0.1 ? vec3(-normal.z, 0, normal.x) : vec3(0, -normal.z, normal.y);
@@ -115,7 +119,7 @@ namespace crs{
 		float u = curand_uniform(s);
 		float v = curand_uniform(s);
 
-		float theta = u * 2.0f * M_PI;
+		float theta = u * 2.0f * (float)M_PI;
 		float phi = acos(2.0f * v - 1.0f);
 
 		p.x = radius * sin(phi) * cos(theta);

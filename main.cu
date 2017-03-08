@@ -100,12 +100,10 @@ int main(int argc, const char * argv[]){
 		// read the camera settings
 		host_camera = new Camera;
 
-		host_camera->width = (float)cc.width;
-		host_camera->height = (float)cc.height;
+		host_camera->resolution_x = (float)cc.width;
+		host_camera->resolution_y = (float)cc.height;
 		
 		Value *setting;
-		setting = Pointer("/camera/resolution").Get(dom);
-		host_camera->resolution = setting->GetFloat();
 
 		setting = Pointer("/camera/position/0").Get(dom);
 		host_camera->position.x = setting->GetFloat();
@@ -128,10 +126,13 @@ int main(int argc, const char * argv[]){
 		setting = Pointer("/camera/up/2").Get(dom);
 		host_camera->up.z = setting->GetFloat();
 
-		setting = Pointer("/camera/fov").Get(dom);
+		setting = Pointer("/camera/field_of_view").Get(dom);
 		host_camera->fov = setting->GetFloat();
 
-		setting = Pointer("/camera/aperture").Get(dom);
+		setting = Pointer("/camera/focus_distance").Get(dom);
+		host_camera->focusplane = setting->GetFloat();
+
+		setting = Pointer("/camera/aperture_size").Get(dom);
 		host_camera->aperture = setting->GetFloat();
 
 		// make the camera current
