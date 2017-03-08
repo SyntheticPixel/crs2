@@ -9,7 +9,7 @@
 	},
     "camera": {
         "name": "camera",
-        "resolution": 10,
+        "resolution": 100,
         "fov": 45,
         "aperture": 0.0,
         "position": [0.0, 0.0, 1.0],

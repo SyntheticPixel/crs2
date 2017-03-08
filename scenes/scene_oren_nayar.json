@@ -1,7 +1,7 @@
 {
 	"rendersettings": {
 		"mode": "production",
-		"preview-size": 0.25,
+		"preview_size": 0.25,
 		"output": "../scenes/scene_oren_nayar.ppm",
         "width": 1024,
         "height": 512,

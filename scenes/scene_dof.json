@@ -1,0 +1,129 @@
+{
+	"rendersettings": {
+		"output": "../scenes/scene_dof.ppm",
+        "width": 1600,
+        "height": 800,
+        "samples": 500,
+        "depth": 8,
+        "gamma": 2.0
+	},
+    "camera": {
+        "name": "camera",
+        "field_of_view": 45.0,
+        "focus_distance": 13.0,
+        "aperture_size": 0.0,
+        "position": [-12.0, 3.0, 5.0],
+        "lookat": [0.0, 0.0, 0.0],
+        "up": [0.0, 1.0, 0.0]
+    },
+    "bxdfs": [
+		{
+		"name": "sky",
+        "type": "SIMPLE_SKY",
+        "albedo": [0.80, 0.80, 0.80],
+        "roughness": 0.0,
+        "refraction": 1.19
+		},
+		{
+        "name": "white",
+        "type": "LAMBERT",
+        "albedo": [0.9, 0.9, 0.9],
+        "roughness": 0.0,
+        "refraction": 1.0
+		},
+		{
+        "name": "normal",
+        "type": "NORMAL",
+        "albedo": [0.95, 0.75, 0.45],
+        "roughness": 0.0,
+        "refraction": 1.0
+		},
+		{
+        "name": "glass",
+        "type": "DIELECTRIC",
+        "albedo": [0.99, 0.99, 0.99],
+        "roughness": 0.0,
+        "refraction": 1.11
+		},
+		{
+        "name": "metal",
+        "type": "CONDUCTOR",
+        "albedo": [0.5, 0.5, 0.5],
+        "roughness": 0.05,
+        "refraction": 1.0
+		},
+		{
+        "name": "floor",
+        "type": "CONDUCTOR",
+        "albedo": [0.95, 0.95, 0.95],
+        "roughness": 0.15,
+        "refraction": 0.0
+		},
+		{
+        "name": "red",
+        "type": "DIELECTRIC",
+        "albedo": [0.95, 0.55, 0.55],
+        "roughness": 0.0,
+        "refraction": 1.5
+		},
+		{
+        "name": "blue",
+        "type": "DIELECTRIC",
+        "albedo": [0.55, 0.55, 0.95],
+        "roughness": 0.0,
+        "refraction": 1.0
+		},
+		{
+        "name": "green",
+        "type": "DIELECTRIC",
+        "albedo": [0.55, 0.95, 0.55],
+        "roughness": 0.0,
+        "refraction": 1.0
+		},
+		{
+        "name": "light",
+        "type": "EMISSION",
+        "albedo": [2.5, 2.5, 2.5],
+        "roughness": 0.0,
+        "refraction": 1.0
+		}
+	],
+    "spheres": [
+		{
+    	"name": "floor",
+        "center": [0.0, -1001.0, 0.0],
+        "radius": 1000.00,
+        "bxdf": "floor"
+        },
+        {
+    	"name": "1",
+        "center": [-5.0, 0.0, 0.0],
+        "radius": 0.99,
+        "bxdf": "metal"
+        },
+        {
+    	"name": "2",
+        "center": [-2.50, 0.0, 0.0],
+        "radius": 0.99,
+        "bxdf": "glass"
+        },
+        {
+    	"name": "3",
+        "center": [0.0, 0.0, 0.0],
+        "radius": 0.99,
+        "bxdf": "normal"
+        },
+        {
+    	"name": "4",
+        "center": [2.50, 0.0, 0.0],
+        "radius": 0.99,
+        "bxdf": "glass"
+        },
+        {
+    	"name": "5",
+        "center": [5.0, 0.0, 0.0],
+        "radius": 0.99,
+        "bxdf": "metal"
+        }
+	]
+}
