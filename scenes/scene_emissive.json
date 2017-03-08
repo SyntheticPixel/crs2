@@ -9,9 +9,9 @@
 	},
     "camera": {
         "name": "camera",
-        "resolution": 10,
-        "fov": 45,
-        "aperture": 0.01,
+        "field_of_view": 45.0,
+        "focus_distance": 1.0,
+        "aperture_size": 0.0,
         "position": [0.0, 0.0, 1.0],
         "lookat": [0.0, 0.0, -1.0],
         "up": [0.0, 1.0, 0.0]
