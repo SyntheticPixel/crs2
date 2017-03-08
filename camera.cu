@@ -29,9 +29,6 @@ __host__ __device__ crs::Camera::~Camera(){
 
 __host__ __device__ void crs::Camera::update(){
 
-	// half the aperture
-	aperture *= 0.5f;
-
 	// update FOV
 	if(fov <= 0.0f) fov = 0.1f;
 	if(fov >= 180.0f) fov = 179.9f;
@@ -62,20 +59,23 @@ __device__ void cast(HitRecord *r, Camera *camera, unsigned long id, unsigned in
 	float v = (sample.y + y_index) - half_height;
 	float z = camera->imageplane;
 
-	// Circle of Confusion
+	// Calculate the point of focus
+	vec3 focused = glm::normalize(vec3(u, -v, -z));
+	vec3 point_of_focus = focused * camera->focusplane;
+
+	// Circle of confusion
 	vec2 coc = crs::RandUniformDisc(&rngState) * camera->aperture;
 
 	// construct the local ray
-	glm::vec4 l = vec4(coc, 0.0f, 0.0f) + vec4(u, -v, -z, 0.0f) ;
+	glm::vec4 l = vec4(point_of_focus, 0.0f) - vec4(coc, 0.0f, 0.0f);
 
-	//transform to world cordinates and normalize
-	glm::vec4 n = glm::normalize(l);
-	glm::vec4 t = n * camera->matrix;
+	//transform to world cordinates
+	glm::vec4 w = glm::normalize(l) * camera->matrix;
 
 	r->wi.origin = camera->position;
-	r->wi.direction.x  = t.x;
-	r->wi.direction.y  = t.y;
-	r->wi.direction.z  = t.z;
+	r->wi.direction.x  = w.x;
+	r->wi.direction.y  = w.y;
+	r->wi.direction.z  = w.z;
 
 	r->wi.frequency = 0.0f;
 	r->wi.length = FLT_MAX;
