@@ -4,6 +4,7 @@
 #include <curand_kernel.h>
 
 #define GLM_FORCE_CUDA
+#define GLM_RIGHT_HANDED
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 
@@ -18,9 +19,9 @@ __host__ __device__ crs::Camera::Camera(){
 	resolution_y = 100;
 
 	fov = 90.0f;			// default 90° vertical fov
-	focusplane = 100;
-	imageplane = 100;
-	aperture = 0.0f;
+	focus_distance = 100;
+	image_plane = 100;
+	aperture_radius = 0.0f;
 }
 
 __host__ __device__ crs::Camera::~Camera(){
@@ -33,7 +34,7 @@ __host__ __device__ void crs::Camera::update(){
 	if(fov <= 0.0f) fov = 0.1f;
 	if(fov >= 180.0f) fov = 179.9f;
 
-	imageplane = resolution_y * tan( glm::radians((180.0f - fov) * 0.5f) );
+	image_plane = resolution_y * tan( glm::radians((180.0f - fov) * 0.5f) );
 
 	//update the camera matrix
 	matrix = glm::lookAt(position, lookat, up);
@@ -52,33 +53,37 @@ __device__ void cast(HitRecord *r, Camera *camera, unsigned long id, unsigned in
 	float x_index = fmod( (float)id, camera->resolution_x );
 	float y_index = id / camera->resolution_x;
 
-	// Calculate the direction
+	// Calculate the direction in camera space
 	float half_width = camera->resolution_x * 0.5f;
 	float half_height = camera->resolution_y * 0.5f;
 	float u = (sample.x + x_index) - half_width;
 	float v = (sample.y + y_index) - half_height;
-	float z = camera->imageplane;
+	float w = camera->image_plane;
 
-	// Calculate the point of focus
-	vec3 focused = glm::normalize(vec3(u, -v, -z));
-	vec3 point_of_focus = focused * camera->focusplane;
+	// Calculate focus point in camera space, invert v and w for right-handed coordinate system
+	vec4 local_ray = glm::normalize( vec4(u, -v, -w, 0.0f));
+	vec4 local_focus = (local_ray  * camera->focus_distance);
 
-	// Circle of confusion
-	vec2 coc = crs::RandUniformDisc(&rngState) * camera->aperture;
+	// Calculate the new origin and direction in camera space
+	// TODO: Code a decent RandUniformDisc function for CUDA
+	vec2 point_in_disc = (crs::RandUniformSquare(&rngState) - vec2(0.5f, 0.5f) ) * camera->aperture_radius;
+	vec4 local_origin = vec4(point_in_disc, 0.0f, 0.0f);
+	vec4 local_direction = glm::normalize( local_focus - local_origin );
 
-	// construct the local ray
-	glm::vec4 l = vec4(point_of_focus, 0.0f) - vec4(coc, 0.0f, 0.0f);
+	// Convert origin and direction to world space
+	vec4 world_origin = vec4(camera->position, 0.0f);			// <--- THIS IS WRONG!!
+	vec4 world_direction = glm::inverse(camera->matrix) * local_direction;
 
-	//transform to world cordinates
-	glm::vec4 w = glm::normalize(l) * camera->matrix;
-
-	r->wi.origin = camera->position;
-	r->wi.direction.x  = w.x;
-	r->wi.direction.y  = w.y;
-	r->wi.direction.z  = w.z;
-
+	// Copy back to buffer
+	r->wi.origin.x = world_origin.x;
+	r->wi.origin.y = world_origin.y;
+	r->wi.origin.z = world_origin.z;
+	r->wi.direction.x = world_direction.x;
+	r->wi.direction.y = world_direction.y;
+	r->wi.direction.z = world_direction.z;
 	r->wi.frequency = 0.0f;
 	r->wi.length = FLT_MAX;
+
 }
 
 // Generates rays

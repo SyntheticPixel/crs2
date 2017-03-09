@@ -13,6 +13,7 @@
 #include <cuda_runtime.h>
 
 #define GLM_FORCE_CUDA
+#define GLM_RIGHT_HANDED
 #include <glm.hpp>
 
 
@@ -28,18 +29,18 @@ namespace crs{
 
 	class Camera{
 	public:
-		float		resolution_x;		// sensor width in pixels
-		float 		resolution_y;		// sensor height in pixels
+		float		resolution_x;			// sensor width in pixels
+		float 		resolution_y;			// sensor height in pixels
 
-		float		fov;				// vertical field of view
-		float 		focusplane;			// distance to the focus plane in camera space
-		float 		imageplane;			// distance to the image plane in camera space
-		float		aperture;			// aperture size
+		float		fov;					// vertical field of view
+		float 		focus_distance;			// distance to the focus plane in world units
+		float 		image_plane;			// distance to the image plane in camera space
+		float		aperture_radius;		// aperture radius
 
-		vec3 		position;			// world position
-		vec3 		lookat;				// look at coordinate in world
-		vec3 		up;					// up vector (usually y-up : 0,1,0)
-		mat4 		matrix;				// camera matrix
+		vec3 		position;				// camera position in world units
+		vec3 		lookat;					// look-at coordinate in world units
+		vec3 		up;						// up vector (usually y-up : 0,1,0)
+		mat4 		matrix;					// camera matrix
 
 		__host__ __device__ Camera();
 		__host__ __device__ ~Camera();

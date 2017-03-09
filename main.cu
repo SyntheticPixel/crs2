@@ -130,10 +130,10 @@ int main(int argc, const char * argv[]){
 		host_camera->fov = setting->GetFloat();
 
 		setting = Pointer("/camera/focus_distance").Get(dom);
-		host_camera->focusplane = setting->GetFloat();
+		host_camera->focus_distance = setting->GetFloat();
 
-		setting = Pointer("/camera/aperture_size").Get(dom);
-		host_camera->aperture = setting->GetFloat();
+		setting = Pointer("/camera/aperture_radius").Get(dom);
+		host_camera->aperture_radius = setting->GetFloat();
 
 		// make the camera current
 		host_camera->update();
