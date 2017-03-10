@@ -4,14 +4,14 @@
         "width": 500,
         "height": 500,
         "samples": 100,
-        "depth": 8,
-        "gamma": 2.0
+        "depth": 4,
+        "gamma": 1.0
 	},
     "camera": {
         "name": "camera",
         "field_of_view": 45.0,
         "focus_distance": 2.0,
-        "aperture_size": 0.0,
+        "aperture_radius": 0.10,
         "position": [1.41, 1.07, 1.41],
         "lookat": [-1.0, -0.50, -1.0],
         "up": [0.0, 1.0, 0.0]

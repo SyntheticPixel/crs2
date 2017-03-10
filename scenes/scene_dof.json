@@ -4,17 +4,23 @@
         "width": 1000,
         "height": 500,
         "samples": 100,
-        "depth": 8,
-        "gamma": 2.0
+        "depth": 4,
+        "gamma": 1.0
 	},
     "camera": {
         "name": "camera",
         "field_of_view": 45.0,
-        "focus_distance": 13.0,
-        "aperture_size": 0.10,
-        "position": [-12.0, 0.0, 5.0],
+        "focus_distance": 10.0,
+        "aperture_radius": 2.0,
+        "position": [0.0, 0.0, 10.0],
         "lookat": [0.0, 0.0, 0.0],
         "up": [0.0, 1.0, 0.0]
+    },
+    "environment": {
+		"name": "sky",
+        "type": "SIMPLE_SKY",
+        "zenith": [0.50, 0.50, 0.50],
+        "horizon": [1.20, 1.20, 1.20]
     },
     "bxdfs": [
 		{
@@ -110,7 +116,7 @@
         {
     	"name": "3",
         "center": [0.0, 0.0, 0.0],
-        "radius": 0.99,
+        "radius": 0.10,
         "bxdf": "normal"
         },
         {
