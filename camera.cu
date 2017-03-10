@@ -66,12 +66,12 @@ __device__ void cast(HitRecord *r, Camera *camera, unsigned long id, unsigned in
 
 	// Calculate the new origin and direction in camera space
 	// TODO: Code a decent RandUniformDisc function for CUDA
-	vec2 point_in_disc = (crs::RandUniformSquare(&rngState) - vec2(0.5f, 0.5f) ) * camera->aperture_radius;
-	vec4 local_origin = vec4(point_in_disc, 0.0f, 0.0f);
+	vec3 point_in_disc = (crs::RandUniformInSphere(&rngState) - vec3(0.5f, 0.5f, 0.5f) ) * camera->aperture_radius;
+	vec4 local_origin = vec4(point_in_disc, 0.0f);
 	vec4 local_direction = glm::normalize( local_focus - local_origin );
 
 	// Convert origin and direction to world space
-	vec4 world_origin = vec4(camera->position, 0.0f);			// <--- THIS IS WRONG!!
+	vec4 world_origin =  vec4(camera->position, 0.0f) + local_origin;
 	vec4 world_direction = glm::inverse(camera->matrix) * local_direction;
 
 	// Copy back to buffer
