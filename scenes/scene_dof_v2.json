@@ -1,38 +1,38 @@
 {
 	"rendersettings": {
-		"output": "../scenes/scene_dof.ppm",
+		"output": "../scenes/scene_dof_v2.ppm",
         "width": 1000,
         "height": 500,
-        "samples": 100,
-        "depth": 4,
-        "gamma": 1.0
+        "samples": 2000,
+        "depth": 8,
+        "gamma": 1.4
 	},
     "camera": {
         "name": "camera",
         "field_of_view": 45.0,
-        "focus_distance": 15.0,
-        "aperture_radius": 2.0,
-        "position": [0.0, 0.0, 15.0],
+        "focus_distance": 13.0,
+        "aperture_radius": 0.1,
+        "position": [-12.0, 0.0, 5.0],
         "lookat": [0.0, 0.0, 0.0],
         "up": [0.0, 1.0, 0.0]
     },
     "environment": {
 		"name": "sky",
         "type": "SIMPLE_SKY",
-        "zenith": [0.50, 0.50, 0.50],
+        "zenith": [0.90, 0.90, 0.90],
         "horizon": [1.20, 1.20, 1.20]
     },
     "bxdfs": [
 		{
 		"name": "sky",
         "type": "SIMPLE_SKY",
-        "albedo": [0.10, 0.10, 0.10],
+        "albedo": [0.60, 0.70, 0.80],
         "roughness": 0.0,
-        "refraction": 1.19
+        "refraction": 1.33
 		},
 		{
         "name": "white",
-        "type": "OREN_NAYAR",
+        "type": "LAMBERT",
         "albedo": [0.9, 0.9, 0.9],
         "roughness": 0.0,
         "refraction": 1.0
@@ -60,28 +60,28 @@
 		},
 		{
         "name": "floor",
-        "type": "OREN_NAYAR",
-        "albedo": [0.95, 0.95, 0.95],
-        "roughness": 0.50,
+        "type": "CONDUCTOR",
+        "albedo": [0.90, 0.90, 0.90],
+        "roughness": 0.25,
         "refraction": 0.0
 		},
 		{
         "name": "red",
-        "type": "OREN_NAYAR",
+        "type": "LAMBERT",
         "albedo": [0.95, 0.25, 0.25],
         "roughness": 0.0,
         "refraction": 1.0
 		},
 		{
         "name": "green",
-        "type": "OREN_NAYAR",
+        "type": "LAMBERT",
         "albedo": [0.25, 0.95, 0.25],
         "roughness": 0.0,
         "refraction": 1.0
 		},
 		{
         "name": "blue",
-        "type": "OREN_NAYAR",
+        "type": "LAMBERT",
         "albedo": [0.25, 0.25, 0.95],
         "roughness": 0.0,
         "refraction": 1.0
@@ -105,13 +105,13 @@
     	"name": "1",
         "center": [-5.0, 0.0, 0.0],
         "radius": 0.99,
-        "bxdf": "red"
+        "bxdf": "white"
         },
         {
     	"name": "2",
         "center": [-2.50, 0.0, 0.0],
         "radius": 0.99,
-        "bxdf": "green"
+        "bxdf": "white"
         },
         {
     	"name": "3",
@@ -123,7 +123,7 @@
     	"name": "4",
         "center": [2.50, 0.0, 0.0],
         "radius": 0.99,
-        "bxdf": "blue"
+        "bxdf": "white"
         },
         {
     	"name": "5",
@@ -133,13 +133,13 @@
         },
         {
     	"name": "6",
-        "center": [-4.0, 4.0, -0.0],
+        "center": [-4.0, 4.0, -1.0],
         "radius": 0.99,
         "bxdf": "light"
         },
         {
     	"name": "7",
-        "center": [4.0, 4.0, -0.0],
+        "center": [4.0, 4.0, -1.0],
         "radius": 0.99,
         "bxdf": "light"
         }

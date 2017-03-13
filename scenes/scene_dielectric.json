@@ -10,8 +10,8 @@
     "camera": {
         "name": "camera",
         "field_of_view": 45.0,
-        "focus_distance": 2.0,
-        "aperture_radius": 0.10,
+        "focus_distance": 35.0,
+        "aperture_radius": 0.00,
         "position": [1.41, 1.07, 1.41],
         "lookat": [-1.0, -0.50, -1.0],
         "up": [0.0, 1.0, 0.0]
