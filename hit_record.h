@@ -40,16 +40,6 @@ namespace crs{
 			terminated = false;
 		};
 
-		__host__ __device__ void reset() {
-			wi = Ray();
-			location = vec3(0.0f, 0.0f, 0.0f);
-			normal = vec3(0.0f, 0.0f, 0.0f);
-			bxdf = crs::NOHIT;
-			accumulator.color = vec3(1.0f, 1.0f, 1.0f);
-			accumulator.samples = 0;
-			terminated = false;
-		};
-
 		__host__ __device__ ~HitRecord(){};
 
 	};

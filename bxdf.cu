@@ -56,8 +56,11 @@ __device__ void crs::bxdf_LAMBERT(Bxdf *b, HitRecord *r, unsigned int seed, unsi
 	r->wi.direction = glm::normalize(target - r->location);
 	r->wi.length = FLT_MAX;
 
-	// modulate the result
-	r->accumulator.color *= b->alb;
+	// cos theta
+	float cos_theta = glm::dot(r->normal, r->wi.direction);
+
+	// accumulate the result
+	r->accumulator.color *= b->alb * cos_theta;
 }
 
 // ON for Oren-Nayar : Oren-Nayar bxdf
@@ -128,7 +131,7 @@ __device__ void crs::bxdf_CONDUCTOR(Bxdf *b, HitRecord *r, unsigned int seed, un
 	r->wi.direction = glm::normalize(f);
 	r->wi.length = FLT_MAX;
 
-	// modulate the result
+	// accumulate the result
 	r->accumulator.color *= b->alb;
 }
 
@@ -194,13 +197,13 @@ __device__ void crs::bxdf_DIELECTRIC(Bxdf *b, HitRecord *r, unsigned int seed, u
 	r->wi.direction = glm::normalize(f);
 	r->wi.length = FLT_MAX;
 
-	// modulate the result
+	// accumulate the result
 	r->accumulator.color *= b->alb;
 }
 
 // E for Emission : energy emitting bxdf
 __device__ void crs::bxdf_EMISSION(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid) {
-	// accumulate the bounce
+	// accumulate the result
 	r->accumulator.color *= b->alb;
 
 	// terminate the path
@@ -226,7 +229,7 @@ __device__ void crs::bxdf_SIMPLE_SKY(Bxdf *b, HitRecord *r){
 	float t = 0.5 * (r->wi.direction.y + 1.0f);
 	vec3 C = ((1.0f - t) * glm::vec3(b->ior)) + (t * b->alb);
 
-	// accumulate the bounce
+	// accumulate the result
 	r->accumulator.color *= C;
 
 	// terminate the path

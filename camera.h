@@ -16,7 +16,6 @@
 #define GLM_RIGHT_HANDED
 #include <glm.hpp>
 
-
 #include "crs.h"
 #include "ray.h"
 #include "hit_record.h"

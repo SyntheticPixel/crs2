@@ -35,7 +35,7 @@ __global__ void crs::KERNEL_ACCUMULATE(HitRecord *hitrecords, PixelBuffer *buffe
 	buffer[threadId].samples++;
 
 	// reset hitrecords for next sample
-	hitrecords[threadId].reset();
+	hitrecords[threadId] = HitRecord();
 
 }
 

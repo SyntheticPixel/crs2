@@ -41,7 +41,6 @@ __host__ __device__ void crs::Camera::update(){
 }
 
 __device__ void cast(HitRecord *r, Camera *camera, unsigned long id, unsigned int seed){
-
 	// Generate a 2D random coordinate with a uniform distribution
 	curandState rngState;
 	glm::vec2 sample;
@@ -66,7 +65,7 @@ __device__ void cast(HitRecord *r, Camera *camera, unsigned long id, unsigned in
 
 	// Calculate the new origin and direction in camera space
 	// TODO: Code a decent RandUniformDisc function for CUDA
-	vec3 point_in_disc = (crs::RandUniformInSphere(&rngState) - vec3(0.5f, 0.5f, 0.5f) ) * camera->aperture_radius;
+	vec3 point_in_disc = crs::RandUniformInSphere(&rngState) * camera->aperture_radius;
 	vec4 local_origin = vec4(point_in_disc, 0.0f);
 	vec4 local_direction = glm::normalize( local_focus - local_origin );
 

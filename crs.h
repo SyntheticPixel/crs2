@@ -62,6 +62,16 @@ namespace crs{
 
 	}BXDFTYPE;
 
+	typedef enum crs_Environment_Types {
+		// CRAYON BXDF types
+		ENV_CONSTANT = 0x00,				// default bxdf, returns a constant color when no hit has been recorded
+		ENV_SKY,							// returns a color based on the normal at the intersection
+		ENV_PREETHAM,
+		ENV_EQUIRECTANGULAR,
+
+
+	}ENVIRONMENTTYPE;
+
 }
 
 #endif /* CRS_H_ */
