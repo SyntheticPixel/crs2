@@ -1,6 +1,6 @@
 {
 	"rendersettings": {
-		"output": "../scenes/scene_dielectric.ppm",
+		"output": "scene_dielectric.ppm",
         "width": 500,
         "height": 500,
         "samples": 100,

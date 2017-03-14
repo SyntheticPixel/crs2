@@ -1,6 +1,6 @@
 {
 	"rendersettings": {
-		"output": "../scenes/scene_conductor.ppm",
+		"output": "scene_conductor.ppm",
         "width": 1024,
         "height": 512,
         "samples": 2000,
