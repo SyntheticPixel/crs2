@@ -15,7 +15,7 @@ using namespace rapidjson;
 // main
 int main(int argc, const char * argv[]){
 	Document		dom;
-	string			jsonfile;
+	string			fullpath;
 	string			output;
 	
 	CudaContext		cc;
@@ -36,7 +36,21 @@ int main(int argc, const char * argv[]){
 	unsigned int bxdfcount = 0;
 
 	if(argc == 2){
+		char	buf[256+1];
+		string	jsonfile;
 		jsonfile = argv[1];
+
+		// Extract the real path
+		fullpath = std::string( realpath( jsonfile.c_str(), buf) );
+		std::string working_directory = fullpath.substr(0, fullpath.find_last_of(":/\\"));
+
+		// Change working directory to that of the scene file
+		int d = chdir(working_directory.c_str());
+		if(d != 0){
+			cout << " Failed to change the working directory..." << std::endl;
+			cout << " ERROR: " << working_directory << std::endl;
+			return EXIT_FAILURE;
+		}
 	}else{
 		cout << " ./crs -path-to-json-file" << std::endl;
 		return EXIT_FAILURE;
@@ -52,8 +66,8 @@ int main(int argc, const char * argv[]){
 	}
 
 	// Read the json file
-	cout << " Opening scene description: " << jsonfile << std::endl;
-	ifstream ifs(jsonfile);
+	cout << " Opening scene description: " << fullpath << std::endl;
+	ifstream ifs(fullpath);
 	IStreamWrapper isw(ifs);
 	dom.ParseStream(isw);
 

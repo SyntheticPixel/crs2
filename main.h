@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <string>
 #include <time.h>
+#include <unistd.h>
 
 #include <rapidjson/rapidjson.h>
 #include <rapidjson/document.h>
