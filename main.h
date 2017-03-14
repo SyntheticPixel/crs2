@@ -15,7 +15,13 @@
 #include <stdlib.h>
 #include <string>
 #include <time.h>
-#include <unistd.h>
+
+#ifdef WIN32
+	#include <io.h>
+	#include <direct.h>
+#elif
+	#include <unistd.h>
+#endif
 
 #include <rapidjson/rapidjson.h>
 #include <rapidjson/document.h>

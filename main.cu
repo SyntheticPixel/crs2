@@ -35,26 +35,49 @@ int main(int argc, const char * argv[]){
 	unsigned int spherecount = 0;
 	unsigned int bxdfcount = 0;
 
-	if(argc == 2){
-		char	buf[256+1];
+#ifdef WIN32
+	if (argc == 2) {
+		char	buf[256 + 1];
 		string	jsonfile;
 		jsonfile = argv[1];
-
 		// Extract the real path
-		fullpath = std::string( realpath( jsonfile.c_str(), buf) );
-		std::string working_directory = fullpath.substr(0, fullpath.find_last_of(":/\\"));
+		fullpath = std::string( _fullpath( buf, jsonfile.c_str(), 256) );
+		std::string working_directory = fullpath.substr(0, fullpath.find_last_of("\\"));
 
 		// Change working directory to that of the scene file
-		int d = chdir(working_directory.c_str());
+		const char *wd = working_directory.c_str();
+		int d = _chdir(wd);
 		if(d != 0){
 			cout << " Failed to change the working directory..." << std::endl;
-			cout << " ERROR: " << working_directory << std::endl;
+			cout << " ERROR: " << d << " - " << working_directory << std::endl;
 			return EXIT_FAILURE;
 		}
 	}else{
 		cout << " ./crs -path-to-json-file" << std::endl;
 		return EXIT_FAILURE;
 	}
+#elif
+	if (argc == 2) {
+		char	buf[256 + 1];
+		string	jsonfile;
+		jsonfile = argv[1];
+		// Extract the real path
+		fullpath = std::string(realpath(jsonfile.c_str(), buf));
+		std::string working_directory = fullpath.substr(0, fullpath.find_last_of(":/\\"));
+
+		// Change working directory to that of the scene file
+		int d = chdir(working_directory.c_str());
+		if (d != 0) {
+			cout << " Failed to change the working directory..." << std::endl;
+			cout << " ERROR: " << working_directory << std::endl;
+			return EXIT_FAILURE;
+		}
+	}
+	else {
+		cout << " ./crs -path-to-json-file" << std::endl;
+		return EXIT_FAILURE;
+}
+#endif
 
 	// Print out some stats
 	cc.GetDeviceProps();
