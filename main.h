@@ -16,10 +16,10 @@
 #include <string>
 #include <time.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 	#include <io.h>
 	#include <direct.h>
-#elif
+#else
 	#include <unistd.h>
 #endif
 
@@ -42,6 +42,7 @@
 #include "ray.h"
 #include "hit_record.h"
 #include "sphere.h"
+#include "triangle.h"
 #include "ppm_output.h"
 #include "bxdf.h"
 

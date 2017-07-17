@@ -26,6 +26,9 @@ int main(int argc, const char * argv[]){
 	Sphere			*host_spheres;
 	Sphere			*device_spheres;
 	
+	Triangle		*host_tris;
+	Triangle		*device_tris;
+
 	BxdfTable		bxdfTable;
 	Bxdf			*host_bxdfs;
 	Bxdf			*device_bxdfs;
@@ -33,9 +36,10 @@ int main(int argc, const char * argv[]){
 	float 			gamma_correction;
 
 	unsigned int spherecount = 0;
+	unsigned int triscount = 0;
 	unsigned int bxdfcount = 0;
 
-#ifdef WIN32
+#ifdef _WIN32
 	if (argc == 2) {
 		char	buf[256 + 1];
 		string	jsonfile;
@@ -56,7 +60,7 @@ int main(int argc, const char * argv[]){
 		cout << " ./crs -path-to-json-file" << std::endl;
 		return EXIT_FAILURE;
 	}
-#elif
+#else
 	if (argc == 2) {
 		char	buf[256 + 1];
 		string	jsonfile;
@@ -74,7 +78,7 @@ int main(int argc, const char * argv[]){
 		}
 	}
 	else {
-		cout << " ./crs -path-to-json-file" << std::endl;
+		cout << " Use : ./crs -path-to-json-file" << std::endl;
 		return EXIT_FAILURE;
 }
 #endif
@@ -268,7 +272,7 @@ int main(int argc, const char * argv[]){
 			const Value& b = (*itr)["bxdf"];
 			std::string name = b.GetString();
 			s.bxdf = bxdfTable.getBxdfIdbyName(name);
-			
+
 			host_spheres[i] = s;
 
 			cout << " Sphere " << i << ", bxdf id:" << s.bxdf << std::endl;
@@ -277,7 +281,58 @@ int main(int argc, const char * argv[]){
 		}
 
 	}else{
-		cout << " Error parsing scene file, no spheres found!" << std::endl;
+		cout << " WARNING: no spheres found!" << std::endl;
+		//return EXIT_FAILURE;
+	}
+
+	if(dom.HasMember("triangles")){
+		Value *setting;
+		setting = Pointer("/triangles").Get(dom);
+		assert(setting->IsArray());
+		triscount = setting->Size();
+		cout << " " << triscount << " Triangle(s) found..." << std::endl;
+
+		// assign the memory
+		host_tris = new Triangle[triscount];
+
+		// fill in the data
+		int i = 0;
+		for (Value::ConstValueIterator itr = setting->Begin(); itr != setting->End(); ++itr){
+			Triangle t;
+
+			const Value& c0 = (*itr)["v0"];
+			t.v0.x = c0[0].GetFloat();
+			t.v0.y = c0[1].GetFloat();
+			t.v0.z = c0[2].GetFloat();
+
+			const Value& c1 = (*itr)["v1"];
+			t.v1.x = c1[0].GetFloat();
+			t.v1.y = c1[1].GetFloat();
+			t.v1.z = c1[2].GetFloat();
+
+			const Value& c2 = (*itr)["v2"];
+			t.v2.x = c2[0].GetFloat();
+			t.v2.y = c2[1].GetFloat();
+			t.v2.z = c2[2].GetFloat();
+
+			const Value& b = (*itr)["bxdf"];
+			std::string name = b.GetString();
+			t.bxdf = bxdfTable.getBxdfIdbyName(name);
+
+			host_tris[i] = t;
+
+			cout << " Triangle " << i << ", bxdf id:" << t.bxdf << std::endl;
+
+			i++;
+		}
+
+	}else{
+		cout << " WARNING: no triangles found!" << std::endl;
+		//return EXIT_FAILURE;
+	}
+
+	if(spherecount == 0 && triscount == 0){
+		cout << " ERROR: no geometry found! Exiting..." << std::endl;
 		return EXIT_FAILURE;
 	}
 
@@ -288,6 +343,10 @@ int main(int argc, const char * argv[]){
 	// Device Sphere
 	cudaMalloc((void**)&device_spheres, sizeof(crs::Sphere)*spherecount);
 	cudaMemcpy(device_spheres, host_spheres, sizeof(crs::Sphere)*spherecount, cudaMemcpyHostToDevice);
+
+	// Device Tris
+	cudaMalloc((void**)&device_tris, sizeof(crs::Triangle)*triscount);
+	cudaMemcpy(device_tris, host_tris, sizeof(crs::Triangle)*triscount, cudaMemcpyHostToDevice);
 
 	// Device Bxdfs
 	cudaMalloc((void**)&device_bxdfs, sizeof(crs::Bxdf)*bxdfcount);
@@ -324,6 +383,9 @@ int main(int argc, const char * argv[]){
 		for (int j = 0; j < cc.depth; j++){
 
 			crs::KERNEL_SPHEREINTERSECT <<<cc.gridSize, cc.blockSize>>>(device_spheres, spherecount, cc.device_hitRecords, cc.width, cc.height);
+			cudaDeviceSynchronize();
+
+			crs::KERNEL_TRIANGLEINTERSECT <<<cc.gridSize, cc.blockSize>>>(device_tris, triscount, cc.device_hitRecords, cc.width, cc.height);
 			cudaDeviceSynchronize();
 
 			crs::KERNEL_BXDF <<<cc.gridSize, cc.blockSize >>>(device_bxdfs, cc.device_hitRecords, cc.device_pixels, cc.width, cc.height, cc.depth, clock());
@@ -371,6 +433,11 @@ int main(int argc, const char * argv[]){
 		delete[] host_spheres;
 	}
 
+	// Delete the host triangles
+	if(host_tris != NULL){
+		delete[] host_tris;
+	}
+
 	// Delete host bxdfs
 	if (host_bxdfs != NULL) {
 		delete[] host_bxdfs;
@@ -384,6 +451,11 @@ int main(int argc, const char * argv[]){
 	// Delete the device spheres
 	if(device_spheres != NULL){
 		cudaFree(device_spheres);
+	}
+
+	// Delete the device triangles
+	if(device_tris != NULL){
+		cudaFree(device_tris);
 	}
 
 	// Delete all memory

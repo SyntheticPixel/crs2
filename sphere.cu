@@ -38,15 +38,15 @@ __device__ void crs::TestSphereIntersections(Sphere *sphere, unsigned int c, Hit
 		// local copy
 		Sphere s = sphere[i];
 
-		float t = SphereHit(&s, &r->wi);
+		float d = SphereHit(&s, &r->wi);
 
 		// make sure we keep the closest intersection
-		if (t >= r->wi.length){
+		if (d >= r->wi.length){
 			return;
 		}else{
 			// we have a hit
-			if(t > 0.00001f){
-				r->wi.length = t;
+			if(d > 0.00001f){
+				r->wi.length = d;
 				r->location = r->wi.evaluate();
 				r->normal = glm::normalize(r->location - s.center);
 				r->bxdf = s.bxdf;

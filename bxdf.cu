@@ -131,7 +131,11 @@ __device__ void crs::bxdf_CONDUCTOR(Bxdf *b, HitRecord *r, unsigned int seed, un
 	r->wi.direction = glm::normalize(f);
 	r->wi.length = FLT_MAX;
 
-	// accumulate the result
+	// cos theta
+	//float cos_theta = glm::dot(r->normal, r->wi.direction);
+
+	// modulate the result
+	//r->accumulator.color += vec3( (2.0f - cos_theta) * 0.5f);
 	r->accumulator.color *= b->alb;
 }
 
