@@ -275,7 +275,7 @@ int main(int argc, const char * argv[]){
 
 			host_spheres[i] = s;
 
-			cout << " Sphere " << i << ", bxdf id:" << s.bxdf << std::endl;
+			//cout << " Sphere " << i << ", bxdf id:" << s.bxdf << std::endl;
 
 			i++;
 		}
@@ -321,7 +321,7 @@ int main(int argc, const char * argv[]){
 
 			host_tris[i] = t;
 
-			cout << " Triangle " << i << ", bxdf id:" << t.bxdf << std::endl;
+			//cout << " Triangle " << i << ", bxdf id:" << t.bxdf << std::endl;
 
 			i++;
 		}
@@ -382,10 +382,10 @@ int main(int argc, const char * argv[]){
 		// for each bounce
 		for (int j = 0; j < cc.depth; j++){
 
-			crs::KERNEL_SPHEREINTERSECT <<<cc.gridSize, cc.blockSize>>>(device_spheres, spherecount, cc.device_hitRecords, cc.width, cc.height);
+			crs::KERNEL_TRIANGLEINTERSECT <<<cc.gridSize, cc.blockSize>>>(device_tris, triscount, cc.device_hitRecords, cc.width, cc.height);
 			cudaDeviceSynchronize();
 
-			crs::KERNEL_TRIANGLEINTERSECT <<<cc.gridSize, cc.blockSize>>>(device_tris, triscount, cc.device_hitRecords, cc.width, cc.height);
+			crs::KERNEL_SPHEREINTERSECT <<<cc.gridSize, cc.blockSize>>>(device_spheres, spherecount, cc.device_hitRecords, cc.width, cc.height);
 			cudaDeviceSynchronize();
 
 			crs::KERNEL_BXDF <<<cc.gridSize, cc.blockSize >>>(device_bxdfs, cc.device_hitRecords, cc.device_pixels, cc.width, cc.height, cc.depth, clock());

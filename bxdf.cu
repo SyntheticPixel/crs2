@@ -225,7 +225,7 @@ __device__ void crs::bxdf_CONSTANT(Bxdf *b, HitRecord *r) {
 	r->accumulator.color = b->alb;
 
 	// terminate the path
-	r->terminated = true;
+	//r->terminated = true;
 }
 
 __device__ void crs::bxdf_SIMPLE_SKY(Bxdf *b, HitRecord *r){

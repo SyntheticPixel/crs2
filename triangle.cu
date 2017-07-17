@@ -64,12 +64,9 @@ __device__ void crs::TestTriangleIntersections(Triangle *trisList, unsigned int 
 		}else{
 			// we have a hit
 			if(d > 0.00001f){
-				// calculate normal
-				vec3 n = glm::cross(t.v1 - t.v0, t.v2 - t.v1);
-
 				r->wi.length = d;
 				r->location = r->wi.evaluate();
-				r->normal = glm::normalize(n);
+				r->normal = glm::normalize( glm::cross(t.v1 - t.v0, t.v2 - t.v0) );
 				r->bxdf = t.bxdf;
 			}
 		}
