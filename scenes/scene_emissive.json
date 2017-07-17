@@ -1,11 +1,11 @@
 {
 	"rendersettings": {
 		"output": "scene_emissive.ppm",
-        "width": 512,
-        "height": 256,
-        "samples": 512,
-        "depth": 4,
-        "gamma": 1.0
+        "width": 1024,
+        "height": 512,
+        "samples": 2000,
+        "depth": 6,
+        "gamma": 1.2
 	},
     "camera": {
         "name": "camera",
@@ -21,76 +21,122 @@
 		"name": "sky",
         "type": "SIMPLE_SKY",
         "albedo": [0.0, 0.0, 0.0],
-        "roughness": 0.0,
-        "refraction": 0.5
+        "roughness": 0.77,
+        "refraction": 1.0
 		},
 		{
 		"name": "normal",
         "type": "NORMAL",
         "albedo": [1.0, 1.0, 1.0],
 		"roughness": 0.0,
-		"refraction": 1.0
+		"refraction": 0.0
 		},
 		{
         "name": "emission_white",
         "type": "EMISSION",
-        "albedo": [2.0, 2.0, 2.0],
+        "albedo": [2.00, 2.00, 2.00],
 		"roughness": 0.0,
-		"refraction": 1.0
+		"refraction": 0.0
 		},
 		{
         "name": "white",
+        "type": "LAMBERT",
+        "albedo": [1.0, 1.0, 1.0],
+		"roughness": 0.0,
+		"refraction": 0.0
+		},
+		{
+        "name": "mirror",
         "type": "CONDUCTOR",
         "albedo": [1.0, 1.0, 1.0],
-		"roughness": 0.25,
-		"refraction": 1.0
+		"roughness": 0.05,
+		"refraction": 0.0
 		},
 		{
-        "name": "emission_red",
-        "type": "EMISSION",
-        "albedo": [2.0, 1.0, 1.0],
+        "name": "grey",
+        "type": "LAMBERT",
+        "albedo": [0.33, 0.33, 0.33],
 		"roughness": 0.0,
 		"refraction": 1.0
 		},
 		{
-        "name": "emission_green",
-        "type": "EMISSION",
-        "albedo": [1.0, 2.0, 1.0],
-		"roughness": 0.0,
+        "name": "red",
+        "type": "CONDUCTOR",
+        "albedo": [1.0, 0.1, 0.1],
+		"roughness": 0.1,
 		"refraction": 1.0
 		},
 		{
-        "name": "emission_blue",
-        "type": "EMISSION",
-        "albedo": [1.0, 1.0, 2.0],
-		"roughness": 0.0,
+        "name": "green",
+        "type": "CONDUCTOR",
+        "albedo": [0.1, 1.0, 0.1],
+		"roughness": 0.1,
 		"refraction": 1.0
+		},
+		{
+        "name": "blue",
+        "type": "DIELECTRIC",
+        "albedo": [0.8, 0.8, 1.0],
+		"roughness": 0.05,
+		"refraction": 1.105
 		}
+	],
+    "triangles": [
+		{
+        "v0": [-10.0, -0.18, -10.0],
+        "v1": [-10.0, -0.18, 10.0],
+        "v2": [10.0, -0.18, 10.0],
+        "bxdf": "white"
+        },
+		{
+        "v0": [-10.0, -0.18, -10.0],
+        "v1": [10.0, -0.18, 10.0],
+        "v2": [10.0, -0.18, -10.0],
+        "bxdf": "white"
+        },
+        {
+        "v0": [-1.0, 2.0, -1.0],
+        "v1": [-1.0, 2.0, 1.0],
+        "v2": [1.0, 2.0, 1.0],
+        "bxdf": "emission_white"
+        },
+		{
+        "v0": [-1.0, 2.0, -1.0],
+        "v1": [1.0, 2.0, 1.0],
+        "v2": [1.0, 2.0, -1.0],
+        "bxdf": "emission_white"
+        },
+        {
+        "v0": [-5.10, -0.16, -0.8],
+        "v1": [-5.10, -0.16, 0.1],
+        "v2": [5.10, -0.16, 0.1],
+        "bxdf": "mirror"
+        },
+		{
+        "v0": [-5.10, -0.16, -0.8],
+        "v1": [5.10, -0.16, 0.1],
+        "v2": [5.10, -0.16, -0.8],
+        "bxdf": "mirror"
+        }
 	],
     "spheres": [
 		{
     	"name": "sphere_1",
         "center": [-0.5, 0.0, -1.0],
         "radius": 0.20,
-        "bxdf": "emission_red"
+        "bxdf": "red"
         },
         {
     	"name": "sphere_2",
         "center": [0.0, 0.0, -1.0],
         "radius": 0.20,
-        "bxdf": "emission_green"
+        "bxdf": "green"
         },
 		{
     	"name": "sphere_3",
         "center": [0.5, 0.0, -1.0],
         "radius": 0.20,
-        "bxdf": "emission_blue"
-        },
-		{
-    	"name": "sphere_4",
-        "center": [0.0, -100.25, -1.0],
-        "radius": 100.0,
-        "bxdf": "white"
+        "bxdf": "blue"
         }
 	]
 }

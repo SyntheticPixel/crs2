@@ -5,7 +5,7 @@
         "height": 500,
         "samples": 500,
         "depth": 8,
-        "gamma": 1.4
+        "gamma": 1.31
 	},
     "camera": {
         "name": "camera",
