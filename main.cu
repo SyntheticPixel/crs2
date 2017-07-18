@@ -215,22 +215,26 @@ int main(int argc, const char * argv[]){
 			if (strcmp(temp, "LAMBERT") == 0) b.type = crs::LAMBERT;
 			if (strcmp(temp, "OREN_NAYAR") == 0) b.type = crs::OREN_NAYAR;
 			if (strcmp(temp, "CONDUCTOR") == 0) b.type = crs::CONDUCTOR;
+			if (strcmp(temp, "MICRO_FACET") == 0) b.type = crs::MICRO_FACET;
 			if (strcmp(temp, "DIELECTRIC") == 0) b.type = crs::DIELECTRIC;
 			if (strcmp(temp, "EMISSION") == 0) b.type = crs::EMISSION;
 			if (strcmp(temp, "SUBSURFACE") == 0) b.type = crs::SUBSURFACE;
 			if (strcmp(temp, "CONSTANT") == 0) b.type = crs::CONSTANT;
 			if (strcmp(temp, "SIMPLE_SKY") == 0) b.type = crs::SIMPLE_SKY;
 
-			const Value& kd = (*itr)["albedo"];
-			b.alb.x = kd[0].GetFloat();
-			b.alb.y = kd[1].GetFloat();
-			b.alb.z = kd[2].GetFloat();
+			const Value& kd = (*itr)["diffuse"];
+			b.diffuse.x = kd[0].GetFloat();
+			b.diffuse.y = kd[1].GetFloat();
+			b.diffuse.z = kd[2].GetFloat();
 
 			const Value& rpt = (*itr)["roughness"];
-			b.rpt = rpt.GetFloat();
+			b.roughness = rpt.GetFloat();
+
+			const Value& fre = (*itr)["fresnel"];
+			b.fresnel = fre.GetFloat();
 
 			const Value& ior = (*itr)["refraction"];
-			b.ior = ior.GetFloat();
+			b.refraction = ior.GetFloat();
 
 			host_bxdfs[i] = b;
 

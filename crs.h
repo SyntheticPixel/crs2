@@ -61,7 +61,8 @@ namespace crs{
 		NORMAL,						// returns a color based on the normal at the intersection
 		LAMBERT,					// Lambert diffuse
 		OREN_NAYAR,					// Oren-Nayar brdf
-		CONDUCTOR,					// bidirectional reflectance distribution function
+		CONDUCTOR,					// Metal, naive implementation
+		MICRO_FACET,				// Micro-facet brdf
 		DIELECTRIC,					// bidirectional transmittance distribution function
 		EMISSION,					// light material
 		SUBSURFACE,					// bidirectional scattering surface (subsurface) distribution function

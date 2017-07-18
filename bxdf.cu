@@ -60,7 +60,7 @@ __device__ void crs::bxdf_LAMBERT(Bxdf *b, HitRecord *r, unsigned int seed, unsi
 	float cos_theta = glm::dot(r->normal, r->wi.direction);
 
 	// accumulate the result
-	r->accumulator.color *= b->alb * cos_theta;
+	r->accumulator.color *= b->diffuse * cos_theta;
 }
 
 // ON for Oren-Nayar : Oren-Nayar bxdf
@@ -90,7 +90,7 @@ __device__ void crs::bxdf_OREN_NAYAR(Bxdf *b, HitRecord *r, unsigned int seed, u
 	float beta = min(angleVN, angleLN);
 	float gamma = dot(incoming - surface_normal * dot(incoming, surface_normal), outgoing - surface_normal * dot(outgoing, surface_normal));
 
-	float sigmaSquared = b->rpt * b->rpt;
+	float sigmaSquared = b->roughness * b->roughness;
 
 	// calculate A and B
 	float A = 1.0 - 0.5 * (sigmaSquared / (sigmaSquared + 0.57));
@@ -101,7 +101,7 @@ __device__ void crs::bxdf_OREN_NAYAR(Bxdf *b, HitRecord *r, unsigned int seed, u
 	float L1 = max(0.0f, NdL) * (A + B * max(0.0f, gamma) * C);
 
 	// modulate the result
-	r->accumulator.color *= b->alb * L1;
+	r->accumulator.color *= b->diffuse * L1;
 
 	// construct the new ray for the next bounce
 	r->wi.origin = r->location;
@@ -124,19 +124,41 @@ __device__ void crs::bxdf_CONDUCTOR(Bxdf *b, HitRecord *r, unsigned int seed, un
 	vec3 ref = r->wi.direction - (2.0f * glm::dot(r->wi.direction, r->normal) * r->normal);
 
 	// perturbate the reflected ray
-	vec3 f = (t * b->rpt) + ref;
+	vec3 f = (t * b->roughness) + ref;
 
 	// construct the new ray for the next bounce
 	r->wi.origin = r->location;
 	r->wi.direction = glm::normalize(f);
 	r->wi.length = FLT_MAX;
 
-	// cos theta
-	//float cos_theta = glm::dot(r->normal, r->wi.direction);
+	// modulate the result
+	r->accumulator.color *= b->diffuse;
+}
+
+// R for Reflect : conductor/metal bxdf
+__device__ void crs::bxdf_MICRO_FACET(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid) {
+
+	// rng state
+	curandState rngState;
+	curand_init(crs::WangHash(seed)+tid, 0, 0, &rngState);
+
+	// generate a point within a unit sphere and transform according to location and normal
+	vec3 t = crs::RandUniformInSphere(&rngState);
+	vec3 target = t + r->normal + r->location;
+
+	// reflect the incoming ray
+	vec3 ref = r->wi.direction - (2.0f * glm::dot(r->wi.direction, r->normal) * r->normal);
+
+	// perturbate the reflected ray
+	vec3 f = (t * b->roughness) + ref;
+
+	// construct the new ray for the next bounce
+	r->wi.origin = r->location;
+	r->wi.direction = glm::normalize(f);
+	r->wi.length = FLT_MAX;
 
 	// modulate the result
-	//r->accumulator.color += vec3( (2.0f - cos_theta) * 0.5f);
-	r->accumulator.color *= b->alb;
+	r->accumulator.color *= b->diffuse;
 }
 
 // T for Transmit : dielectric/glass bxdf
@@ -156,12 +178,12 @@ __device__ void crs::bxdf_DIELECTRIC(Bxdf *b, HitRecord *r, unsigned int seed, u
 
 	if( dt > 0.0f){
 		no = -r->normal;
-		ni_over_nt = b->ior;
-		cos = b->ior * dt / r->wi.length;
+		ni_over_nt = b->refraction;
+		cos = b->refraction * dt / r->wi.length;
 
 	}else{
 		no = r->normal;
-		ni_over_nt = 1.0f / b->ior;
+		ni_over_nt = 1.0f / b->refraction;
 		cos = -dt / r->wi.length;
 	}
 
@@ -171,7 +193,7 @@ __device__ void crs::bxdf_DIELECTRIC(Bxdf *b, HitRecord *r, unsigned int seed, u
 		refracted = ni_over_nt * (r->wi.direction - (r->normal * dt)) - r->normal * sqrt(discriminant);
 
 		// calculate schlick approximation, aka the probability of reflection
-		float r0 = ( 1.0f - b->ior) / ( 1.0f + b->ior);
+		float r0 = ( 1.0f - b->refraction) / ( 1.0f + b->refraction);
 		r0 = r0*r0;
 		schlick = r0 + (1 - r0)*pow((1.0f - cos), 5.0f);
 	}else{
@@ -194,7 +216,7 @@ __device__ void crs::bxdf_DIELECTRIC(Bxdf *b, HitRecord *r, unsigned int seed, u
 	// perturbate the resulting ray
 	vec3 t = crs::RandUniformInSphere(&rngState);
 	vec3 target = t + no + r->location;
-	vec3 f = (t * b->rpt) + final;
+	vec3 f = (t * b->roughness) + final;
 
 	// construct the new ray for the next bounce
 	r->wi.origin = r->location;
@@ -202,13 +224,13 @@ __device__ void crs::bxdf_DIELECTRIC(Bxdf *b, HitRecord *r, unsigned int seed, u
 	r->wi.length = FLT_MAX;
 
 	// accumulate the result
-	r->accumulator.color *= b->alb;
+	r->accumulator.color *= b->diffuse;
 }
 
 // E for Emission : energy emitting bxdf
 __device__ void crs::bxdf_EMISSION(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid) {
 	// accumulate the result
-	r->accumulator.color *= b->alb;
+	r->accumulator.color *= b->diffuse;
 
 	// terminate the path
 	r->terminated = true;
@@ -222,7 +244,7 @@ __device__ void crs::bxdf_SUBSURFACE(Bxdf *b, HitRecord *r, unsigned int seed, u
 __device__ void crs::bxdf_CONSTANT(Bxdf *b, HitRecord *r) {
 
 	// replace with constant color
-	r->accumulator.color = b->alb;
+	r->accumulator.color = b->diffuse;
 
 	// terminate the path
 	//r->terminated = true;
@@ -231,7 +253,7 @@ __device__ void crs::bxdf_CONSTANT(Bxdf *b, HitRecord *r) {
 __device__ void crs::bxdf_SIMPLE_SKY(Bxdf *b, HitRecord *r){
 	// calculate color
 	float t = 0.5 * (r->wi.direction.y + 1.0f);
-	vec3 C = ((1.0f - t) * glm::vec3(b->ior)) + (t * b->alb);
+	vec3 C = ((1.0f - t) * glm::vec3(b->refraction)) + (t * b->diffuse);
 
 	// accumulate the result
 	r->accumulator.color *= C;
@@ -263,6 +285,9 @@ __device__ void crs::evaluateBxdf(Bxdf *bxdfList, HitRecord *r, PixelBuffer *p, 
 		break;
 	case crs::CONDUCTOR:
 		bxdf_CONDUCTOR(&bxdfList[bid], r, seed, tid);
+		break;
+	case crs::MICRO_FACET:
+		bxdf_MICRO_FACET(&bxdfList[bid], r, seed, tid);
 		break;
 	case crs::DIELECTRIC:
 		bxdf_DIELECTRIC(&bxdfList[bid], r, seed, tid);

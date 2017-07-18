@@ -27,17 +27,18 @@ using namespace glm;
 namespace crs {
 
 	struct Bxdf {
-		BXDFTYPE		type;			// bxdf type
-		vec3			alb;			// albedo : reflection/absorption
-		float			rpt;			// ray perturbation : 0.0 = mirror, 1.0 = lambert
-		float			ior;			// index of reflection/refraction
-
+		BXDFTYPE		type;				// Brdf type
+		vec3			diffuse;			// Diffuse albedon
+		float			roughness;			// Roughness, ray perturbation : 0.0 = mirror/clear, 1.0 = lambert/diffuse
+		float 			fresnel;			// Fresnel coefficient
+		float			refraction;			// Index of refraction
 
 		__host__ __device__ Bxdf() {
 			type = NOHIT;
-			alb = vec3(0.0f, 0.0f, 0.0f);
-			rpt = 0.0f;
-			ior = 1.0f;
+			diffuse = vec3(0.0f, 0.0f, 0.0f);
+			roughness = 1.0f;
+			fresnel = 1.0f;
+			refraction = 1.0f;
 		}
 
 		__host__ __device__ ~Bxdf() {}
@@ -78,6 +79,7 @@ namespace crs {
 	__device__ void bxdf_LAMBERT(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid);
 	__device__ void bxdf_OREN_NAYAR(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid);
 	__device__ void bxdf_CONDUCTOR(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid);
+	__device__ void bxdf_MICRO_FACET(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid);
 	__device__ void bxdf_DIELECTRIC(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid);
 	__device__ void bxdf_EMISSION(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid);
 	__device__ void bxdf_SUBSURFACE(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid);
