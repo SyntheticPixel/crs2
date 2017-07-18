@@ -1,27 +1,27 @@
 {
 	"rendersettings": {
-		"output": "scene_emissive.ppm",
-        "width": 1024,
-        "height": 512,
-        "samples": 500,
+		"output": "scene_microfacet.ppm",
+        "width": 2048,
+        "height": 1024,
+        "samples": 2000,
         "depth": 8,
         "gamma": 1.4
 	},
     "camera": {
         "name": "camera",
         "field_of_view": 45.0,
-        "focus_distance": 1.0,
-        "aperture_radius": 0.0,
-        "position": [0.0, 0.0, 1.0],
-        "lookat": [0.0, 0.0, -1.0],
+        "focus_distance": 2.0,
+        "aperture_radius": 0.00,
+        "position": [-0.2, 1.0, 1.0],
+        "lookat": [0.0, 0.0, -0.714],
         "up": [0.0, 1.0, 0.0]
     },
     "bxdfs": [
 		{
 		"name": "sky",
         "type": "SIMPLE_SKY",
-        "diffuse": [0.0, 0.0, 0.0],
-        "roughness": 0.77,
+        "diffuse": [0.6, 0.7, 0.8],
+        "roughness": 0.85,
         "fresnel": 1.0,
         "refraction": 1.0
 		},
@@ -34,7 +34,7 @@
 		"refraction": 0.0
 		},
 		{
-        "name": "emission_white",
+        "name": "light",
         "type": "EMISSION",
         "diffuse": [2.00, 2.00, 2.00],
 		"roughness": 0.0,
@@ -44,22 +44,22 @@
 		{
         "name": "white",
         "type": "LAMBERT",
-        "diffuse": [1.0, 1.0, 1.0],
-		"roughness": 0.0,
+        "diffuse": [0.9, 0.9, 0.9],
+		"roughness": 1.0,
 		"fresnel": 1.0,
 		"refraction": 0.0
 		},
 		{
         "name": "mirror",
-        "type": "CONDUCTOR",
+        "type": "MICRO_FACET",
         "diffuse": [1.0, 1.0, 1.0],
-		"roughness": 0.01,
+		"roughness": 0.025,
 		"fresnel": 1.0,
 		"refraction": 0.0
 		},
 		{
         "name": "grey",
-        "type": "LAMBERT",
+        "type": "MICRO_FACET",
         "diffuse": [0.33, 0.33, 0.33],
 		"roughness": 0.0,
 		"fresnel": 1.0,
@@ -67,7 +67,7 @@
 		},
 		{
         "name": "red",
-        "type": "CONDUCTOR",
+        "type": "MICRO_FACET",
         "diffuse": [1.0, 0.1, 0.1],
 		"roughness": 0.1,
 		"fresnel": 1.0,
@@ -75,7 +75,7 @@
 		},
 		{
         "name": "green",
-        "type": "CONDUCTOR",
+        "type": "MICRO_FACET",
         "diffuse": [0.1, 1.0, 0.1],
 		"roughness": 0.1,
 		"fresnel": 1.0,
@@ -83,7 +83,7 @@
 		},
 		{
         "name": "blue",
-        "type": "DIELECTRIC",
+        "type": "MICRO_FACET",
         "diffuse": [0.8, 0.8, 1.0],
 		"roughness": 0.05,
 		"fresnel": 1.0,
@@ -107,13 +107,13 @@
         "v0": [-4.0, 2.0, -1.0],
         "v1": [-4.0, 2.0, 1.0],
         "v2": [4.0, 2.0, 1.0],
-        "bxdf": "emission_white"
+        "bxdf": "light"
         },
 		{
         "v0": [-4.0, 2.0, -1.0],
         "v1": [4.0, 2.0, 1.0],
         "v2": [4.0, 2.0, -1.0],
-        "bxdf": "emission_white"
+        "bxdf": "light"
         },
         {
         "v0": [-5.10, -0.175, -0.8],
