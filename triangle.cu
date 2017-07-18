@@ -50,7 +50,7 @@ __device__ void crs::TestTriangleIntersections(Triangle *trisList, unsigned int 
 	// early exit
 	if (r->terminated) return;
 
-	// loop over every sphere
+	// loop over every triangle
 	unsigned int i;
 	for(i=0; i < c; i++){
 		// local copy
