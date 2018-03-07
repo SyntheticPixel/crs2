@@ -1,90 +1,114 @@
 {
 	"rendersettings": {
 		"output": "scene_dielectric.ppm",
-        "width": 500,
-        "height": 500,
-        "samples": 100,
-        "depth": 4,
-        "gamma": 1.31
+        "width": 1000,
+        "height": 1000,
+        "samples": 1000,
+        "depth": 16,
+        "gamma": 1.40
 	},
     "camera": {
         "name": "camera",
         "field_of_view": 45.0,
         "focus_distance": 35.0,
         "aperture_radius": 0.00,
-        "position": [1.41, 1.07, 1.41],
-        "lookat": [-1.0, -0.50, -1.0],
+        "position": [-0.4, 0.60, 2.00],
+        "lookat": [0.0, 0.2, 0.0],
         "up": [0.0, 1.0, 0.0]
+    },
+    "environment": {
+		"name": "sky",
+        "type": "SIMPLE_SKY",
+        "zenith": [0.80, 0.90, 1.10],
+        "horizon": [0.10, 0.10, 0.10]
     },
     "bxdfs": [
 		{
 		"name": "sky",
         "type": "SIMPLE_SKY",
-        "albedo": [0.70, 0.80, 0.90],
+        "diffuse": [0.30, 0.60, 0.90],
         "roughness": 0.0,
-        "refraction": 1.10
+        "fresnel": 1.20,
+        "refraction": 1.20
 		},
 		{
 		"name": "normal",
         "type": "NORMAL",
-        "albedo": [1.0, 1.0, 1.0],
+        "diffuse": [1.0, 1.0, 1.0],
         "roughness": 0.0,
+        "fresnel": 1.0,
         "refraction": 1.0
 		},
 		{
         "name": "black",
-        "type": "OREN_NAYAR",
-        "albedo": [0.1, 0.1, 0.1],
-        "roughness": 0.0,
-        "refraction": 1.0
+        "type": "MICRO_FACET",
+        "diffuse": [0.1, 0.1, 0.1],
+        "roughness": 0.5,
+        "fresnel": 0.1,
+        "refraction": 0.1
 		},
 		{
         "name": "metal",
-        "type": "NORMAL",
-        "albedo": [0.95, 0.75, 0.45],
-        "roughness": 0.50,
-        "refraction": 1.105
+        "type": "CONDUCTOR",
+        "diffuse": [0.95, 0.95, 0.95],
+        "roughness": 0.20,
+        "fresnel": 0.50,
+        "refraction": 0.50
 		},
 		{
         "name": "glass",
         "type": "DIELECTRIC",
-        "albedo": [0.8, 0.9, 1.0],
+        "diffuse": [0.8, 0.9, 1.0],
         "roughness": 0.10,
-        "refraction": 1.105
+        "fresnel": 0.5,
+        "refraction": 1.099
 		},
 		{
         "name": "floor",
-        "type": "CONDUCTOR",
-        "albedo": [0.333, 0.333, 0.333],
-        "roughness": 0.15,
-        "refraction": 0.0
+        "type": "MICRO_FACET",
+        "diffuse": [0.20, 0.20, 0.20],
+        "roughness": 0.1,
+        "fresnel": 0.2,
+        "refraction": 0.1
 		},
 		{
         "name": "red",
         "type": "DIELECTRIC",
-        "albedo": [0.95, 0.25, 0.25],
+        "diffuse": [0.95, 0.25, 0.25],
         "roughness": 0.05,
-        "refraction": 1.105
+        "fresnel": 1.0,
+        "refraction": 1.099
 		},
 		{
         "name": "blue",
         "type": "DIELECTRIC",
-        "albedo": [0.45, 0.45, 0.95],
+        "diffuse": [0.45, 0.45, 0.95],
         "roughness": 0.05,
-        "refraction": 1.105
+        "fresnel": 0.95,
+        "refraction": 1.099
 		},
 		{
         "name": "green",
         "type": "DIELECTRIC",
-        "albedo": [0.25, 0.95, 0.25],
+        "diffuse": [0.25, 0.95, 0.25],
         "roughness": 0.05,
-        "refraction": 1.105
+        "fresnel": 1.00,
+        "refraction": 1.099
 		},
 		{
         "name": "light",
         "type": "EMISSION",
-        "albedo": [2.5, 2.5, 2.5],
+        "diffuse": [1.05, 1.05, 1.05],
         "roughness": 0.0,
+        "fresnel": 1.0,
+        "refraction": 1.0
+		},
+		{
+        "name": "light-strong",
+        "type": "EMISSION",
+        "diffuse": [5.05, 5.05, 5.05],
+        "roughness": 0.0,
+        "fresnel": 1.0,
         "refraction": 1.0
 		}
 	],
@@ -96,58 +120,64 @@
         "bxdf": "floor"
         },
         {
-    	"name": "green-bottom",
+    	"name": "middle-bottom",
         "center": [0.0, 0.0, 0.0],
         "radius": 0.099,
         "bxdf": "green"
         },
         {
-    	"name": "glass-bottom",
+    	"name": "left-bottom",
         "center": [-0.2, 0.0, 0.0],
         "radius": 0.099,
-        "bxdf": "glass"
+        "bxdf": "metal"
         },
         {
-    	"name": "red-bottom",
+    	"name": "right-bottom",
         "center": [0.2, 0.0, 0.0],
         "radius": 0.099,
         "bxdf": "red"
         },
         {
-    	"name": "light-left",
-        "center": [-0.2, 0.2, 0.0],
-        "radius": 0.099,
-        "bxdf": "light"
-        },
-        {
-    	"name": "metal-middle",
+    	"name": "middle-middle",
         "center": [0.0, 0.2, 0.0],
         "radius": 0.099,
-        "bxdf": "metal"
+        "bxdf": "normal"
         },
         {
-    	"name": "light-right",
+    	"name": "left-middle",
+        "center": [-0.2, 0.2, 0.0],
+        "radius": 0.099,
+        "bxdf": "green"
+        },
+        {
+    	"name": "right-middle",
         "center": [0.2, 0.2, 0.0],
-        "radius": 0.099,
-        "bxdf": "light"
-        },
-        {
-    	"name": "glass-top",
-        "center": [0.0, 0.4, 0.0],
-        "radius": 0.099,
-        "bxdf": "glass"
-        },
-        {
-    	"name": "red-top",
-        "center": [-0.2, 0.4, 0.0],
         "radius": 0.099,
         "bxdf": "red"
         },
         {
-    	"name": "floor-top",
+    	"name": "middle-top",
+        "center": [0.0, 0.4, 0.0],
+        "radius": 0.099,
+        "bxdf": "light"
+        },
+        {
+    	"name": "left-top",
+        "center": [-0.2, 0.4, 0.0],
+        "radius": 0.099,
+        "bxdf": "black"
+        },
+        {
+    	"name": "right-top",
         "center": [0.2, 0.4, 0.0],
         "radius": 0.099,
         "bxdf": "blue"
+        },
+        {
+    	"name": "light-top",
+        "center": [-1.5, 2.0, 1.0],
+        "radius": 0.75,
+        "bxdf": "light-strong"
         }
 	]
 }

@@ -5,9 +5,9 @@
 		"output": "scene_lambert.ppm",
         "width": 1024,
         "height": 512,
-        "samples": 1000,
-        "depth": 4,
-        "gamma": 1.31
+        "samples": 500,
+        "depth": 8,
+        "gamma": 1.40
 	},
     "camera": {
         "name": "camera",
@@ -92,36 +92,41 @@
 		{
 		"name": "sky",
         "type": "SIMPLE_SKY",
-        "albedo": [1.0, 1.0, 1.0],
+        "diffuse": [1.0, 1.0, 1.0],
         "roughness": 0.0,
+        "fresnel": 1.0,
         "refraction": 1.19
 		},
 		{
 		"name": "white",
         "type": "LAMBERT",
-        "albedo": [0.99, 0.99, 0.99],
+        "diffuse": [0.99, 0.99, 0.99],
 		"roughness": 0.0,
+		"fresnel": 1.0,
 		"refraction": 1.0
 		},
 		{
 		"name": "grey",
         "type": "LAMBERT",
-        "albedo": [0.5, 0.5, 0.5],
+        "diffuse": [0.5, 0.5, 0.5],
 		"roughness": 0.0,
+		"fresnel": 1.0,
 		"refraction": 1.0
 		},
 		{
         "name": "black",
         "type": "LAMBERT",
-        "albedo": [0.05, 0.05, 0.05],
+        "diffuse": [0.05, 0.05, 0.05],
 		"roughness": 0.0,
+		"fresnel": 1.0,
 		"refraction": 1.0
 		},
 		{
         "name": "normal",
         "type": "NORMAL",
-        "albedo": [0.0, 0.0, 0.0],
+        "diffuse": [0.0, 0.0, 0.0],
 		"roughness": 1.0,
+		"fresnel": 1.0,
 		"refraction": 1.0
 		}
 	],

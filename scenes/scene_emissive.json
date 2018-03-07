@@ -3,16 +3,16 @@
 		"output": "scene_emissive.ppm",
         "width": 1024,
         "height": 512,
-        "samples": 500,
+        "samples": 1000,
         "depth": 8,
-        "gamma": 1.4
+        "gamma": 1.20
 	},
     "camera": {
         "name": "camera",
-        "field_of_view": 45.0,
-        "focus_distance": 1.0,
-        "aperture_radius": 0.0,
-        "position": [0.0, 0.0, 1.0],
+        "field_of_view": 33.0,
+        "focus_distance": 2.2,
+        "aperture_radius": 0.05,
+        "position": [-0.4, 0.8, 1.0],
         "lookat": [0.0, 0.0, -1.0],
         "up": [0.0, 1.0, 0.0]
     },
@@ -20,10 +20,10 @@
 		{
 		"name": "sky",
         "type": "SIMPLE_SKY",
-        "diffuse": [0.0, 0.0, 0.0],
-        "roughness": 0.77,
-        "fresnel": 1.0,
-        "refraction": 1.0
+        "diffuse": [0.5, 0.5, 0.5],
+        "roughness": 0.9,
+        "fresnel": 0.9,
+        "refraction": 0.9
 		},
 		{
 		"name": "normal",
@@ -45,15 +45,15 @@
         "name": "white",
         "type": "LAMBERT",
         "diffuse": [1.0, 1.0, 1.0],
-		"roughness": 0.0,
+		"roughness": 1.0,
 		"fresnel": 1.0,
 		"refraction": 0.0
 		},
 		{
         "name": "mirror",
         "type": "CONDUCTOR",
-        "diffuse": [1.0, 1.0, 1.0],
-		"roughness": 0.01,
+        "diffuse": [1.0, 0.8, 0.2],
+		"roughness": 0.15,
 		"fresnel": 1.0,
 		"refraction": 0.0
 		},
@@ -67,40 +67,40 @@
 		},
 		{
         "name": "red",
-        "type": "CONDUCTOR",
+        "type": "MICRO_FACET",
         "diffuse": [1.0, 0.1, 0.1],
 		"roughness": 0.1,
-		"fresnel": 1.0,
+		"fresnel": 0.5,
 		"refraction": 1.0
 		},
 		{
         "name": "green",
-        "type": "CONDUCTOR",
+        "type": "MICRO_FACET",
         "diffuse": [0.1, 1.0, 0.1],
 		"roughness": 0.1,
-		"fresnel": 1.0,
+		"fresnel": 0.5,
 		"refraction": 1.0
 		},
 		{
         "name": "blue",
         "type": "DIELECTRIC",
-        "diffuse": [0.8, 0.8, 1.0],
+        "diffuse": [0.4, 0.4, 1.0],
 		"roughness": 0.05,
 		"fresnel": 1.0,
-		"refraction": 1.105
+		"refraction": 1.25
 		}
 	],
     "triangles": [
 		{
-        "v0": [-10.0, -0.18, -10.0],
-        "v1": [-10.0, -0.18, 10.0],
-        "v2": [10.0, -0.18, 10.0],
+        "v0": [-10.0, -0.25, -10.0],
+        "v1": [-10.0, -0.25, 10.0],
+        "v2": [10.0, -0.25, 10.0],
         "bxdf": "white"
         },
 		{
-        "v0": [-10.0, -0.18, -10.0],
-        "v1": [10.0, -0.18, 10.0],
-        "v2": [10.0, -0.18, -10.0],
+        "v0": [-10.0, -0.25, -10.0],
+        "v1": [10.0, -0.25, 10.0],
+        "v2": [10.0, -0.25, -10.0],
         "bxdf": "white"
         },
         {
@@ -139,11 +139,47 @@
     	"name": "sphere_2",
         "center": [0.0, 0.0, -1.0],
         "radius": 0.20,
-        "bxdf": "normal"
+        "bxdf": "green"
         },
 		{
     	"name": "sphere_3",
         "center": [0.5, 0.0, -1.0],
+        "radius": 0.20,
+        "bxdf": "blue"
+        },
+        {
+    	"name": "sphere_4",
+        "center": [-0.5, 0.0, -1.6],
+        "radius": 0.20,
+        "bxdf": "red"
+        },
+        {
+    	"name": "sphere_5",
+        "center": [0.0, 0.0, -1.6],
+        "radius": 0.20,
+        "bxdf": "green"
+        },
+		{
+    	"name": "sphere_6",
+        "center": [0.5, 0.0, -1.6],
+        "radius": 0.20,
+        "bxdf": "blue"
+        },
+        {
+    	"name": "sphere_7",
+        "center": [-0.5, 0.0, -2.2],
+        "radius": 0.20,
+        "bxdf": "red"
+        },
+        {
+    	"name": "sphere_8",
+        "center": [0.0, 0.0, -2.2],
+        "radius": 0.20,
+        "bxdf": "green"
+        },
+		{
+    	"name": "sphere_9",
+        "center": [0.5, 0.0, -2.2],
         "radius": 0.20,
         "bxdf": "blue"
         }

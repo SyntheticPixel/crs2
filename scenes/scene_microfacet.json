@@ -1,10 +1,10 @@
 {
 	"rendersettings": {
 		"output": "scene_microfacet.ppm",
-        "width": 2048,
-        "height": 1024,
+        "width": 1024,
+        "height": 512,
         "samples": 2000,
-        "depth": 8,
+        "depth": 16,
         "gamma": 1.4
 	},
     "camera": {
@@ -15,6 +15,12 @@
         "position": [-0.2, 1.0, 1.0],
         "lookat": [0.0, 0.0, -0.714],
         "up": [0.0, 1.0, 0.0]
+    },
+    "environment": {
+		"name": "sky",
+        "type": "SIMPLE_SKY",
+        "zenith": [0.90, 0.90, 0.90],
+        "horizon": [1.20, 1.20, 1.20]
     },
     "bxdfs": [
 		{
@@ -69,16 +75,16 @@
         "name": "red",
         "type": "MICRO_FACET",
         "diffuse": [1.0, 0.1, 0.1],
-		"roughness": 0.1,
-		"fresnel": 1.0,
+		"roughness": 0.0,
+		"fresnel": 0.5,
 		"refraction": 1.0
 		},
 		{
         "name": "green",
         "type": "MICRO_FACET",
-        "diffuse": [0.1, 1.0, 0.1],
-		"roughness": 0.1,
-		"fresnel": 1.0,
+        "diffuse": [0.1, 0.9, 0.1],
+		"roughness": 0.25,
+		"fresnel": 0.5,
 		"refraction": 1.0
 		},
 		{
@@ -145,7 +151,7 @@
     	"name": "sphere_3",
         "center": [0.5, 0.0, -1.0],
         "radius": 0.20,
-        "bxdf": "blue"
+        "bxdf": "green"
         }
 	]
 }

@@ -5,7 +5,7 @@
         "height": 500,
         "samples": 500,
         "depth": 8,
-        "gamma": 1.31
+        "gamma": 1.40
 	},
     "camera": {
         "name": "camera",
@@ -26,71 +26,80 @@
 		{
 		"name": "sky",
         "type": "SIMPLE_SKY",
-        "albedo": [0.60, 0.70, 0.80],
+        "diffuse": [0.60, 0.70, 0.80],
         "roughness": 0.0,
+        "fresnel": 1.0,
         "refraction": 1.33
 		},
 		{
         "name": "white",
         "type": "LAMBERT",
-        "albedo": [0.9, 0.9, 0.9],
+        "diffuse": [0.9, 0.9, 0.9],
         "roughness": 0.0,
+        "fresnel": 1.0,
         "refraction": 1.0
 		},
 		{
         "name": "normal",
         "type": "NORMAL",
-        "albedo": [0.95, 0.75, 0.45],
+        "diffuse": [0.95, 0.75, 0.45],
         "roughness": 0.0,
+        "fresnel": 1.0,
         "refraction": 1.0
 		},
 		{
         "name": "glass",
         "type": "DIELECTRIC",
-        "albedo": [0.99, 0.99, 0.99],
+        "diffuse": [0.99, 0.99, 0.99],
         "roughness": 0.0,
+       	"fresnel": 1.0,
         "refraction": 1.11
 		},
 		{
         "name": "metal",
         "type": "CONDUCTOR",
-        "albedo": [0.5, 0.5, 0.5],
+        "diffuse": [0.5, 0.5, 0.5],
         "roughness": 0.05,
+        "fresnel": 1.0,
         "refraction": 1.0
 		},
 		{
         "name": "floor",
         "type": "CONDUCTOR",
-        "albedo": [0.90, 0.90, 0.90],
+        "diffuse": [0.90, 0.90, 0.90],
         "roughness": 0.25,
+		"fresnel": 1.0,
         "refraction": 0.0
 		},
 		{
         "name": "red",
         "type": "LAMBERT",
-        "albedo": [0.95, 0.25, 0.25],
+        "diffuse": [0.95, 0.25, 0.25],
         "roughness": 0.0,
+		"fresnel": 1.0,
         "refraction": 1.0
 		},
 		{
         "name": "green",
         "type": "LAMBERT",
-        "albedo": [0.25, 0.95, 0.25],
+        "diffuse": [0.25, 0.95, 0.25],
         "roughness": 0.0,
         "refraction": 1.0
 		},
 		{
         "name": "blue",
         "type": "LAMBERT",
-        "albedo": [0.25, 0.25, 0.95],
+        "diffuse": [0.25, 0.25, 0.95],
         "roughness": 0.0,
+		"fresnel": 1.0,      
         "refraction": 1.0
 		},
 		{
         "name": "light",
         "type": "EMISSION",
-        "albedo": [2.5, 2.5, 2.5],
+        "diffuse": [2.5, 2.5, 2.5],
         "roughness": 0.0,
+        "fresnel": 1.0,
         "refraction": 1.0
 		}
 	],
