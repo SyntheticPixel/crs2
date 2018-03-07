@@ -62,7 +62,7 @@ namespace crs{
 		LAMBERT,					// Lambert diffuse
 		OREN_NAYAR,					// Oren-Nayar brdf
 		CONDUCTOR,					// Metal, naive implementation
-		MICRO_FACET,				// Micro-facet brdf
+		MICROFACET,				// Micro-facet brdf
 		DIELECTRIC,					// bidirectional transmittance distribution function
 		EMISSION,					// light material
 		SUBSURFACE,					// bidirectional scattering surface (subsurface) distribution function

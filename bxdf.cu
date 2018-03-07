@@ -132,11 +132,17 @@ __device__ void crs::bxdf_CONDUCTOR(Bxdf *b, HitRecord *r, unsigned int seed, un
 	r->wi.length = FLT_MAX;
 
 	// modulate the result
-	r->accumulator.color *= b->diffuse;
+	//r->accumulator.color *= b->diffuse;
+
+	// calculate the result
+	float a = glm::dot(r->wi.direction, r->normal) * b->fresnel;
+	vec3 color_s = r->accumulator.color * a;
+	vec3 color_d = b->diffuse*(1.0f-a);
+	r->accumulator.color *= color_s + color_d;
 }
 
 // R for Reflect : conductor/metal bxdf
-__device__ void crs::bxdf_MICRO_FACET(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid) {
+__device__ void crs::bxdf_MICROFACET(Bxdf *b, HitRecord *r, unsigned int seed, unsigned int tid) {
 
 	// rng state
 	curandState rngState;
@@ -157,8 +163,11 @@ __device__ void crs::bxdf_MICRO_FACET(Bxdf *b, HitRecord *r, unsigned int seed, 
 	r->wi.direction = glm::normalize(f);
 	r->wi.length = FLT_MAX;
 
-	// modulate the result
-	r->accumulator.color *= b->diffuse;
+	// calculate the result
+	float a = glm::dot(r->wi.direction, r->normal) * b->fresnel;
+	vec3 color_s = r->accumulator.color * a;
+	vec3 color_d = b->diffuse*(1.0f-a);
+	r->accumulator.color *= color_s + color_d;
 }
 
 // T for Transmit : dielectric/glass bxdf
@@ -224,7 +233,13 @@ __device__ void crs::bxdf_DIELECTRIC(Bxdf *b, HitRecord *r, unsigned int seed, u
 	r->wi.length = FLT_MAX;
 
 	// accumulate the result
-	r->accumulator.color *= b->diffuse;
+	//r->accumulator.color *= b->diffuse;
+
+	// calculate the result
+	float a = glm::dot(r->wi.direction, r->normal) * b->fresnel;
+	vec3 color_s = r->accumulator.color * a;
+	vec3 color_d = b->diffuse*(1.0f-a);
+	r->accumulator.color *= color_s + color_d;
 }
 
 // E for Emission : energy emitting bxdf
@@ -286,8 +301,8 @@ __device__ void crs::evaluateBxdf(Bxdf *bxdfList, HitRecord *r, PixelBuffer *p, 
 	case crs::CONDUCTOR:
 		bxdf_CONDUCTOR(&bxdfList[bid], r, seed, tid);
 		break;
-	case crs::MICRO_FACET:
-		bxdf_MICRO_FACET(&bxdfList[bid], r, seed, tid);
+	case crs::MICROFACET:
+		bxdf_MICROFACET(&bxdfList[bid], r, seed, tid);
 		break;
 	case crs::DIELECTRIC:
 		bxdf_DIELECTRIC(&bxdfList[bid], r, seed, tid);

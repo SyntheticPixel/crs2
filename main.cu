@@ -20,18 +20,18 @@ int main(int argc, const char * argv[]){
 	
 	CudaContext		cc;
 	
-	Camera 			*host_camera;
-	Camera			*device_camera;
+	Camera 			*host_camera = NULL;
+	Camera			*device_camera = NULL;
 	
-	Sphere			*host_spheres;
-	Sphere			*device_spheres;
+	Sphere			*host_spheres = NULL;
+	Sphere			*device_spheres = NULL;
 	
-	Triangle		*host_tris;
-	Triangle		*device_tris;
+	Triangle		*host_tris = NULL;
+	Triangle		*device_tris = NULL;
 
 	BxdfTable		bxdfTable;
-	Bxdf			*host_bxdfs;
-	Bxdf			*device_bxdfs;
+	Bxdf			*host_bxdfs = NULL;
+	Bxdf			*device_bxdfs = NULL;
 
 	float 			gamma_correction;
 
@@ -215,7 +215,7 @@ int main(int argc, const char * argv[]){
 			if (strcmp(temp, "LAMBERT") == 0) b.type = crs::LAMBERT;
 			if (strcmp(temp, "OREN_NAYAR") == 0) b.type = crs::OREN_NAYAR;
 			if (strcmp(temp, "CONDUCTOR") == 0) b.type = crs::CONDUCTOR;
-			if (strcmp(temp, "MICRO_FACET") == 0) b.type = crs::MICRO_FACET;
+			if (strcmp(temp, "MICRO_FACET") == 0) b.type = crs::MICROFACET;
 			if (strcmp(temp, "DIELECTRIC") == 0) b.type = crs::DIELECTRIC;
 			if (strcmp(temp, "EMISSION") == 0) b.type = crs::EMISSION;
 			if (strcmp(temp, "SUBSURFACE") == 0) b.type = crs::SUBSURFACE;
@@ -419,47 +419,55 @@ int main(int argc, const char * argv[]){
 	}else{
 		// save the file
 		crs::SavePPM(cc.host_pixels, cc.width, cc.height, gamma_correction, output);
-		cout << " Output saved to " << "output.ppm" << std::endl;
+		cout << " Output saved to " << output << std::endl;
 	}
 
 	// Delete the host Camera
 	if(host_camera != NULL){
 		delete host_camera;
-	}
-
-	// Delete the device Camera
-	if(device_camera != NULL){
-		cudaFree(device_camera);
+		cout << " HOST: deleted Camera..." << std::endl;
 	}
 
 	// Delete the host spheres
 	if(host_spheres != NULL){
 		delete[] host_spheres;
+		cout << " HOST: deleted Sphere primitives..." << std::endl;
 	}
 
 	// Delete the host triangles
 	if(host_tris != NULL){
 		delete[] host_tris;
+		cout << " HOST: deleted Triangle primitives..." << std::endl;
 	}
 
 	// Delete host bxdfs
 	if (host_bxdfs != NULL) {
 		delete[] host_bxdfs;
+		cout << " HOST: deleted BXDF's..." << std::endl;
+	}
+
+	// Delete the device Camera
+	if(device_camera != NULL){
+		cudaFree(device_camera);
+		cout << " DEVICE: deleted Camera..." << std::endl;
 	}
 
 	// Delete device bxdfs
 	if (device_bxdfs != NULL) {
 		cudaFree(device_bxdfs);
+		cout << " DEVICE: deleted BXDF's..." << std::endl;
 	}
 
 	// Delete the device spheres
 	if(device_spheres != NULL){
 		cudaFree(device_spheres);
+		cout << " DEVICE: deleted Sphere primitives..." << std::endl;
 	}
 
 	// Delete the device triangles
 	if(device_tris != NULL){
 		cudaFree(device_tris);
+		cout << " DEVICE: deleted Triangle primitives..." << std::endl;
 	}
 
 	// Delete all memory
